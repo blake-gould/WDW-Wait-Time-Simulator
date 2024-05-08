@@ -42,6 +42,7 @@ import java.util.TimerTask;
 import javax.swing.Action;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,14 +54,15 @@ import javax.swing.JToggleButton;
  */
 public class Display extends javax.swing.JFrame {
     
-    public Park curr = null;
+    public Park activePark = null;
     public ArrayList<Park> parks = new ArrayList<>();
     public int currnum;
     public boolean hover;
     public boolean hubgraphics;
     
     public boolean[][] grid;
-    private ArrayList<Family> hubFamilys = new ArrayList<>();
+    private final Object hubFamiliesLock = new Object(); // A lock that prevents the hubFamilies ArrayList from being accessed from multiple threads at a time
+    private ArrayList<Family> hubFamilies = new ArrayList<>();
     public parkTimer tmr;
     
     public Point spawn ;
@@ -82,7 +84,7 @@ public class Display extends javax.swing.JFrame {
     
     public int loc;
     
-    public ArrayList<Family> hubFamilysToAdd = new ArrayList<>();
+    public ArrayList<Family> hubFamiliesToAdd = new ArrayList<>();
     
     
     
@@ -90,12 +92,13 @@ public class Display extends javax.swing.JFrame {
      * Creates new form Display
      */
     public Display(ArrayList<Park> parks) {
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         initComponents();
         this.parks = parks;
         for (Park p: parks) {
             p.setD(this);
         }
-        this.curr = null;
+        this.activePark = null;
         this.currnum = 4;
         this.add(panel);
         panel.setVisible(true);
@@ -155,7 +158,8 @@ public class Display extends javax.swing.JFrame {
         Runnable Familymove = new Runnable() {
             @Override
             public void run() {
-                Familymove();
+                UpdateSelectedAttractionStats();
+                MoveFamily();
             }
         };
         Task t = new Task(Familymove);
@@ -375,79 +379,88 @@ public class Display extends javax.swing.JFrame {
     public JButton button4;
     public JButton buttonT;
     
+    public void UpdateSelectedAttractionStats() {
+        int selectedIndex = attractionsList.getSelectedIndex();
+        if (selectedIndex != -1) {
+            Attraction selectedAttraction = activePark.rides.get(selectedIndex);
+            info1.setText(selectedAttraction.name);
+            info2.setText(selectedAttraction.line.size() + "");
+            info3.setText(selectedAttraction.fline.size() + "");
+            info4.setText(selectedAttraction.ride.size() + "");
+            info5.setText(selectedAttraction.outFlowTime / 13 + "");
+            info6.setText(selectedAttraction.expTime + "");
+            info7.setText(selectedAttraction.targetAudience);
+            info8.setText(selectedAttraction.priority + "");
+            info9.setBackground(activePark.rides.get(attractionsList.getSelectedIndex()).color);    
+        }
+    }
     
-    public void Familymove() {
-        
-        int z = attractionsList.getSelectedIndex();
-        if (z != -1) {
-            Attraction a = curr.rides.get(z);
-            info1.setText(a.name);
-            info2.setText(a.line.size() + "");
-            info3.setText(a.fline.size() + "");
-            info4.setText(a.ride.size() + "");
-            info5.setText(a.outFlowTime / 13 + "");
-            info6.setText(a.expTime + "");
-            info7.setText(a.targetAudience);
-            info8.setText(a.priority + "");
-            info9.setBackground(curr.rides.get(attractionsList.getSelectedIndex()).color);    
+    public void MoveFamily() {
+        synchronized (hubFamiliesLock) {
+            for (Family f: hubFamiliesToAdd) {
+                hubFamilies.add(f);
+            }
         }
-        for (Family f: hubFamilysToAdd) {
-            hubFamilys.add(f);
-        }
-        
-        hubFamilysToAdd.clear();
+        hubFamiliesToAdd.clear();
         
         ArrayList<Family> Familystoremove = new ArrayList<>();
 
-        if (hubFamilys.size() > 0) {
-            flags = false;
-        } else {
-            flags = true;
+        synchronized (hubFamiliesLock) {
+            if (hubFamilies.size() > 0) {
+                flags = false;
+            } else {
+                flags = true;
+            }
         }
         
-        for (Family g: hubFamilys) {
-            if (g.transferred) {
-                if (g.oldPark == 0) {
-                    g.setLocation(mkentrance);
-                } else
-                if (g.oldPark == 1) {
-                    g.setLocation(epentrance);
-                } else
-                if (g.oldPark == 2) {
-                    g.setLocation(hsentrance);
-                } else
-                if (g.oldPark == 3) {
-                    g.setLocation(akentrance);
+        synchronized (hubFamiliesLock) {
+            for (Family currFam: hubFamilies) {
+                if (currFam.transferred) {
+                    switch(currFam.oldPark) {
+                        case 0:
+                            currFam.setLocation(mkentrance);
+                            break;
+                        case 1: 
+                            currFam.setLocation(epentrance);
+                            break;
+                        case 2:
+                            currFam.setLocation(hsentrance);
+                            break;
+                        case 3:
+                            currFam.setLocation(akentrance);
+                            break;
+                    }
+                    determinePark(currFam);
+                    currFam.transferred = false;
                 }
-                
-                determinePark(g);
-                g.transferred = false;
             }
         }
-        
-        for (Family g: hubFamilys) {
-            if (g.location.x == g.destination.x && g.location.y == g.destination.y) {
-                Familystoremove.add(g);
-                Park p = g.parkDestination;
-                p.familysToAdd.add(g);
-                g.setLocation(p.parkExitPoint);
-                g.transferred = true;
-                g.attractionDestination = p.determineDestination(g);
-                g.destination.x = g.attractionDestination.x;
-                g.destination.y = g.attractionDestination.y;
-                
+        synchronized (hubFamiliesLock) {
+            for (Family g: hubFamilies) {
+                if (g.location.x == g.destination.x && g.location.y == g.destination.y) {
+                    Familystoremove.add(g);
+                    Park p = g.parkDestination;
+                    p.familysToAdd.add(g);
+                    g.setLocation(p.parkExitPoint);
+                    g.transferred = true;
+                    g.attractionDestination = p.determineDestination(g);
+                    g.destination.x = g.attractionDestination.x;
+                    g.destination.y = g.attractionDestination.y;
+                    
+                }
             }
         }
-        
-        for (Family g: Familystoremove) {
-            hubFamilys.remove(g);
+
+        synchronized (hubFamiliesLock) {
+            for (Family g: Familystoremove) {
+                hubFamilies.remove(g);
+            }
         }
         
         Familystoremove.clear();
         
-        //System.out.println(hubFamilys.size());
-        
-        for (Family g : hubFamilys) {
+        synchronized (hubFamiliesLock) {
+            for (Family g : hubFamilies) {
                 // This indicates if g has moved or not this passTime()
                 boolean moved = false;
 
@@ -489,6 +502,7 @@ public class Display extends javax.swing.JFrame {
                             g.setLocation(x, y);
                     }
                 }   
+            }
         }
     }
     
@@ -591,8 +605,8 @@ public class Display extends javax.swing.JFrame {
         if (currnum >= parks.size()) {
             currnum = 0;
         }
-        curr = parks.get(currnum);
-        curr.dp = panel;
+        activePark = parks.get(currnum);
+        activePark.dp = panel;
         panel.repaint();
         
     }
@@ -603,8 +617,8 @@ public class Display extends javax.swing.JFrame {
         if (currnum < 0) {
             currnum = parks.size() - 1;
         }
-        curr = parks.get(currnum);
-        curr.dp = panel;
+        activePark = parks.get(currnum);
+        activePark.dp = panel;
         panel.repaint();
         
     }
@@ -977,7 +991,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
     private void attractionsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_attractionsListValueChanged
        int x = attractionsList.getSelectedIndex();
        if (x != -1) {
-        Attraction a = curr.rides.get(x);
+        Attraction a = activePark.rides.get(x);
         info1.setText(a.name);
         info2.setText(a.line.size() + "");
         info3.setText(a.fline.size() + "");
@@ -986,7 +1000,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         info6.setText(a.expTime + "");
         info7.setText(a.targetAudience);
         info8.setText(a.priority + "");
-        info9.setBackground(curr.rides.get(attractionsList.getSelectedIndex()).color);    
+        info9.setBackground(activePark.rides.get(attractionsList.getSelectedIndex()).color);    
        }
        
     }//GEN-LAST:event_attractionsListValueChanged
@@ -1004,7 +1018,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         public dpanel() {
             addMouseListener(new MouseAdapter() { 
                 public void mousePressed(MouseEvent me) { 
-                    if (curr != null && me.getX() > 70 && me.getX() < 120 && me.getY() > 40 && me.getY() < 90) {
+                    if (activePark != null && me.getX() > 70 && me.getX() < 120 && me.getY() > 40 && me.getY() < 90) {
                         bgg.isOpen = !bgg.isOpen;
                         
                     }
@@ -1013,7 +1027,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                         hubgraphics = true;
                         currnum = 4;
                         
-                        curr = null;
+                        activePark = null;
                         
                         
                     }
@@ -1035,24 +1049,24 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                             currnum = 2;
                         }                         
                         hubgraphics = false;
-                        curr = parks.get(currnum);
-                        curr.dp = panel;
+                        activePark = parks.get(currnum);
+                        activePark.dp = panel;
                         adjustButtons();
                     }
                     
-                    if (curr != null) {
+                    if (activePark != null) {
                         int xPress = me.getX();
                         int yPress = me.getY();
                         
 
                         
-                        for (Family g : curr.Familys) {
+                        for (Family g : activePark.Familys) {
                             if (Math.abs(g.location.getX() - xPress) < 6 && Math.abs(g.location.getY() - yPress) < 6) {
 
-                                for (Family x : curr.Familys) {
+                                for (Family x : activePark.Familys) {
                                     x.tracking = false;
                                 }
-                                for (Attraction a: curr.rides) {
+                                for (Attraction a: activePark.rides) {
                                     for (Family x: a.line) {
                                         x.tracking = false;
                                     }
@@ -1064,8 +1078,8 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                                     }
                                 }
                                 g.tracking = true;
-                                curr.ageLabel.setText("The age group of the subject is " + g.age);
-                                curr.trackingModel = new DefaultListModel();
+                                activePark.ageLabel.setText("The age group of the subject is " + g.age);
+                                activePark.trackingModel = new DefaultListModel();
 
                                 
                             }
@@ -1088,7 +1102,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                                 subpanel4.remove(b);
                         }
                         buttons = new ArrayList<>();
-                        for (Attraction a : curr.rides) {
+                        for (Attraction a : activePark.rides) {
                             JToggleButton closedButton = new JToggleButton("X");
                             closedButton.setSelected(false);
                             if (a.closed) {
@@ -1114,15 +1128,15 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                             }
                         }
             // Initialize Attractions Statistics   
-            info1.setText(curr.rides.get(0).name);
-            info2.setText((curr.rides.get(0).line.size() + ""));
-            info3.setText(curr.rides.get(0).fline.size() + "");
-            info4.setText(curr.rides.get(0).ride.size() + "");
-            info5.setText(curr.rides.get(0).outFlowTime / 13 + "");
-            info6.setText(curr.rides.get(0).expTime + "");
-            info7.setText(curr.rides.get(0).targetAudience);
-            info8.setText(curr.rides.get(0).priority + "");
-            info9.setBackground(curr.rides.get(0).color);
+            info1.setText(activePark.rides.get(0).name);
+            info2.setText((activePark.rides.get(0).line.size() + ""));
+            info3.setText(activePark.rides.get(0).fline.size() + "");
+            info4.setText(activePark.rides.get(0).ride.size() + "");
+            info5.setText(activePark.rides.get(0).outFlowTime / 13 + "");
+            info6.setText(activePark.rides.get(0).expTime + "");
+            info7.setText(activePark.rides.get(0).targetAudience);
+            info8.setText(activePark.rides.get(0).priority + "");
+            info9.setBackground(activePark.rides.get(0).color);
             
             // Create Wait Time Labels 
             // 20 - 50 - 20, 20 - 50 - 20
@@ -1137,7 +1151,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             int x2 = 30;
             int y2= 40;
             
-            for (Attraction a : curr.rides) {
+            for (Attraction a : activePark.rides) {
                 JLabel label = new JLabel(a.name);
                 JLabel label2 = new JLabel(a.getWaitTime() + "");
                 subpanel3.add(label);
@@ -1179,7 +1193,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
             g.fillRect(0, 0, size.width, size.height); 
             
-            if (curr == null) {
+            if (activePark == null) {
                 g.drawImage(image.imageVar, 0, 0, null);    
             }
         }
@@ -1187,19 +1201,19 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         public void setLabelTexts() {           
             timeLabel.setText(parks.get(0).shownTimeLabel.getText());
             
-            if (curr != null) {
-                attractionsList.setModel(curr.model);
-                paknam.setText(curr.name);
-                trackingList.setModel(curr.trackingModel);
-                fastpassList.setText(curr.fastpassTA.getText());
-                FamilyInfoList.setText(curr.ageLabel.getText());
-                timeLabel.setText(curr.shownTimeLabel.getText());
+            if (activePark != null) {
+                attractionsList.setModel(activePark.model);
+                paknam.setText(activePark.name);
+                trackingList.setModel(activePark.trackingModel);
+                fastpassList.setText(activePark.fastpassTA.getText());
+                FamilyInfoList.setText(activePark.ageLabel.getText());
+                timeLabel.setText(activePark.shownTimeLabel.getText());
                 if (attractionsList.getSelectedIndex() != -1) {
                     attractionsList.setSelectedIndex(attractionsList.getSelectedIndex());
                 }
-                for (int i = 0; i < curr.rides.size(); i++) {
-                    label1s.get(i).setText(curr.rides.get(i).name);
-                    label2s.get(i).setText(curr.rides.get(i).getWaitTime() + "");
+                for (int i = 0; i < activePark.rides.size(); i++) {
+                    label1s.get(i).setText(activePark.rides.get(i).name);
+                    label2s.get(i).setText(activePark.rides.get(i).getWaitTime() + "");
                 }
             } else {
                 paknam.setText("");     
@@ -1288,12 +1302,11 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             g.fillRect(hsentrance.x, hsentrance.y, 10, 10);
             g.fillRect(akentrance.x, akentrance.y, 10, 10);
             
-            for (Family x: hubFamilys) {
+            ArrayList<Family> hubFamiliesCopy = new ArrayList<>(hubFamilies);
+            for (Family x: hubFamiliesCopy) {
                     x.draw(g);    
             }
-            
-            
-            
+    
 //            mkflagback.draw(g);
 //            akflagback.draw(g);
 //            hsflagback.draw(g);
@@ -1313,25 +1326,25 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         public void drawParkGraphics(Graphics g) throws ConcurrentModificationException {
             
             
-            g.drawImage(curr.image.imageVar, 0, 0, null);  
+            g.drawImage(activePark.image.imageVar, 0, 0, null);  
             
-           /*if (curr.counter < 3000 ) {
+           /*if (activePark.counter < 3000 ) {
                 
-                if (curr.counter % 1 == 0) {
-                    for (int i = 1; i < curr.innerfills.length - 1; i++) {
-                        for (int j = 1; j < curr.innerfills[i].length - 1; j++) {
-                            if (curr.innerfills[i][j] == true) {
-                                if (!curr.bools[i][j + 1]) {
-                                    curr.innerfills[i][j+1] = true;
+                if (activePark.counter % 1 == 0) {
+                    for (int i = 1; i < activePark.innerfills.length - 1; i++) {
+                        for (int j = 1; j < activePark.innerfills[i].length - 1; j++) {
+                            if (activePark.innerfills[i][j] == true) {
+                                if (!activePark.bools[i][j + 1]) {
+                                    activePark.innerfills[i][j+1] = true;
                                 }
-                                if (!curr.bools[i + 1][j]) {
-                                    curr.innerfills[i + 1][j] = true; 
+                                if (!activePark.bools[i + 1][j]) {
+                                    activePark.innerfills[i + 1][j] = true; 
                                 }
-                                if (!curr.bools[i - 1][j]) {
-                                    curr.innerfills[i - 1][j] = true;  
+                                if (!activePark.bools[i - 1][j]) {
+                                    activePark.innerfills[i - 1][j] = true;  
                                 }
-                                if (!curr.bools[i][j - 1]) {
-                                   curr.innerfills[i][j-1] = true;  
+                                if (!activePark.bools[i][j - 1]) {
+                                   activePark.innerfills[i][j-1] = true;  
                                 } 
                             }
                         }
@@ -1339,21 +1352,21 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                 }   
             }*/
            // Fills the background with the sky color
-           if (curr.counter < 3000)/*4 seconds*/ {
-                for (int i = 1; i < curr.fills.length - 1; i++) {
-                    for (int j = 1; j <curr.fills[i].length - 1; j++) {
-                        if (curr.fills[i][j] == true) {
-                            if (!curr.bools[i][j + 1] && !curr.innerfills[i][j + 1]) {
-                                curr.fills[i][j+1] = true;
+           if (activePark.counter < 3000)/*4 seconds*/ {
+                for (int i = 1; i < activePark.fills.length - 1; i++) {
+                    for (int j = 1; j <activePark.fills[i].length - 1; j++) {
+                        if (activePark.fills[i][j] == true) {
+                            if (!activePark.bools[i][j + 1] && !activePark.innerfills[i][j + 1]) {
+                                activePark.fills[i][j+1] = true;
                             }
-                            if (!curr.bools[i + 1][j] && !curr.innerfills[i + 1][j]) {
-                                curr.fills[i + 1][j] = true; 
+                            if (!activePark.bools[i + 1][j] && !activePark.innerfills[i + 1][j]) {
+                                activePark.fills[i + 1][j] = true; 
                             }
-                            if (!curr.bools[i - 1][j] && !curr.innerfills[i - 1][j]) {
-                                curr.fills[i - 1][j] = true;  
+                            if (!activePark.bools[i - 1][j] && !activePark.innerfills[i - 1][j]) {
+                                activePark.fills[i - 1][j] = true;  
                             }
-                            if (!curr.bools[i][j - 1] && !curr.innerfills[i][j - 1]) {
-                               curr.fills[i][j-1] = true;  
+                            if (!activePark.bools[i][j - 1] && !activePark.innerfills[i][j - 1]) {
+                               activePark.fills[i][j-1] = true;  
                             } 
                         }
                     }
@@ -1361,24 +1374,24 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             }
            
            // Fills the grass sections 
-               for (int i = 0; i < curr.innerfills.length; i++) {
-                    for (int j = 0; j <curr.innerfills[i].length; j++) {
-                        if (curr.bools[i][j]) {
-                            if (!curr.bools[i][j + 1] && !curr.innerfills[i][j+1]) {
-                                curr.grassfills[i][j+1] = true;
+               for (int i = 0; i < activePark.innerfills.length; i++) {
+                    for (int j = 0; j <activePark.innerfills[i].length; j++) {
+                        if (activePark.bools[i][j]) {
+                            if (!activePark.bools[i][j + 1] && !activePark.innerfills[i][j+1]) {
+                                activePark.grassfills[i][j+1] = true;
                             }
-                            if (!curr.bools[i + 1][j] && !curr.innerfills[i + 1][j]) {
-                                curr.grassfills[i + 1][j] = true;
+                            if (!activePark.bools[i + 1][j] && !activePark.innerfills[i + 1][j]) {
+                                activePark.grassfills[i + 1][j] = true;
                             }
                             if (i-1 >= 0) {
-                            if (!curr.bools[i - 1][j] && !curr.innerfills[i-1][j]) {
-                                    curr.grassfills[i - 1][j] = true;     
+                            if (!activePark.bools[i - 1][j] && !activePark.innerfills[i-1][j]) {
+                                    activePark.grassfills[i - 1][j] = true;     
                                   
                             }}
                             if (j -1 >= 0) {
-                            if (!curr.bools[i][j - 1] && !curr.innerfills[i][j-1]) {
+                            if (!activePark.bools[i][j - 1] && !activePark.innerfills[i][j-1]) {
                                 
-                                    curr.grassfills[i][j - 1] = true;    
+                                    activePark.grassfills[i][j - 1] = true;    
                                 
                                 
                             }} 
@@ -1394,32 +1407,32 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
            
            
         
-           if (!curr.simEnded) {
-           if (curr.nicegraphics) {
+           if (!activePark.simEnded) {
+           if (activePark.nicegraphics) {
            g.setColor(Color.BLACK);
-           for (int i = 0; i < curr.horizontalSpaces; i++) {
-                for (int j = 0; j < curr.verticalSpaces; j++) {
+           for (int i = 0; i < activePark.horizontalSpaces; i++) {
+                for (int j = 0; j < activePark.verticalSpaces; j++) {
                     g.setColor(Color.BLACK);
-                    //g.drawRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize);
+                    //g.drawRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize);
                     if (i > 1 && j > 1) {
-                        g.setColor(curr.bgcolor);
-                    if (curr.bools[i][j] && !curr.bools[i-1][j] && !curr.bools[i+1][j] ) {
+                        g.setColor(activePark.bgcolor);
+                    if (activePark.bools[i][j] && !activePark.bools[i-1][j] && !activePark.bools[i+1][j] ) {
                         
-                        g.fillRect((int)curr.spaces[i][j].getX() + 2, (int)curr.spaces[i][j].getY(), curr.blockSize - 4, curr.blockSize); 
+                        g.fillRect((int)activePark.spaces[i][j].getX() + 2, (int)activePark.spaces[i][j].getY(), activePark.blockSize - 4, activePark.blockSize); 
                         g.setColor(Color.white);
                         g.fillRect((i * 10) + 3, (j * 10) + 3, 3, 3);
-                    } else if(curr.bools[i][j] && !curr.bools[i][j - 1] && !curr.bools[i+1][j + 1] ) {
+                    } else if(activePark.bools[i][j] && !activePark.bools[i][j - 1] && !activePark.bools[i+1][j + 1] ) {
 
-                        g.fillRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY() + 2, curr.blockSize, curr.blockSize - 4); 
+                        g.fillRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY() + 2, activePark.blockSize, activePark.blockSize - 4); 
                         g.setColor(Color.white);
                         g.fillRect((i * 10) + 3, (j * 10) + 3, 3, 3);
-                    } else if (curr.bools[i][j] && curr.bools[i][j - 1] && curr.bools[i+1][j + 1] && curr.bools[i-1][j] && curr.bools[i+1][j]  ) {
+                    } else if (activePark.bools[i][j] && activePark.bools[i][j - 1] && activePark.bools[i+1][j + 1] && activePark.bools[i-1][j] && activePark.bools[i+1][j]  ) {
 
-                        g.fillRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize); 
-                    } else if (curr.bools[i][j]) {
+                        g.fillRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize); 
+                    } else if (activePark.bools[i][j]) {
                         // Color of the walls
 
-                        g.fillRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize); 
+                        g.fillRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize); 
                         g.setColor(Color.black);
                         g.drawLine((i * 10), (j * 10) + 3, (i*10) + 10, (j * 10) + 3);
                         g.drawLine((i * 10), (j * 10) + 6, (i*10) + 10, (j * 10) + 6);
@@ -1428,27 +1441,27 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                         g.setColor(Color.white);
                         g.fillRect((i * 10) + 3, (j * 10) + 3, 3, 3);
                         g.setColor(Color.black);
-                        g.drawRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize);
+                        g.drawRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize);
                     }
                     }
-                    if (curr.fills[i][j]) {
+                    if (activePark.fills[i][j]) {
                         
                         if (loc < 0) {
                             loc = 0;
                         }
                         if (backColors.size() > 0) {
                             g.setColor(backColors.get(loc));
-                            g.fillRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize);     
+                            g.fillRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize);     
                         }
                          
                     }
-                    if (curr.grassfills[i][j]) {
+                    if (activePark.grassfills[i][j]) {
                         g.setColor(new Color(95, 173, 65));
-                        g.fillOval((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize); 
+                        g.fillOval((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize); 
                     }
-                    /*if (curr.innerfills[i][j] == true) { 
+                    /*if (activePark.innerfills[i][j] == true) { 
                        g.setColor(new Color(162, 214, 249));
-                       g.fillRect((int)curr.spaces[i][j].getX(), (int)curr.spaces[i][j].getY(), curr.blockSize, curr.blockSize); 
+                       g.fillRect((int)activePark.spaces[i][j].getX(), (int)activePark.spaces[i][j].getY(), activePark.blockSize, activePark.blockSize); 
                    }*/
                 }
             }
@@ -1480,8 +1493,8 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
            }
            
            
-           for (Attraction a : curr.rides) {
-                if (curr.labelsShowing) {
+           for (Attraction a : activePark.rides) {
+                if (activePark.labelsShowing) {
                     a.draw(g);    
                 }
             }
@@ -1495,10 +1508,10 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
            for (int j = 50; j < 900; j = j+200) {
 
            for (int i = 0; i < 1900; i = i+300) {
-                   if (i + curr.currentTime[2] < 1900) {
+                   if (i + activePark.currentTime[2] < 1900) {
                         g.setColor(new Color(255, 255, 255, 200));
                         //g.setColor(Color.white);
-                        int num = i + curr.currentTime[2] * 4;
+                        int num = i + activePark.currentTime[2] * 4;
                         while (num > 1800) {
                             num = num - 1800;
                         }
@@ -1530,10 +1543,10 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
 //                Point p = a.getAccessPoint();
 //                int xPress = (int)p.getX();
 //                int yPress = (int)p.getY();
-//                    while (xPress % curr.blockSize != 0) {
+//                    while (xPress % activePark.blockSize != 0) {
 //                        xPress--;
 //                    }
-//                    while (yPress % curr.blockSize != 0 ) {
+//                    while (yPress % activePark.blockSize != 0 ) {
 //                        yPress--;
 //                    }
 //                
@@ -1542,26 +1555,26 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
 //                Point p2 = a.getExitPoint();
 //                int xPress2 = (int)p2.getX();
 //                int yPress2 = (int)p2.getY();
-//                while (xPress2 % curr.blockSize != 0) {
+//                while (xPress2 % activePark.blockSize != 0) {
 //                    xPress2--;
 //                }
-//                while (yPress2 % curr.blockSize != 0 ) {
+//                while (yPress2 % activePark.blockSize != 0 ) {
 //                    yPress2--;
 //                }
 //                
 //                Point p3 = a.earlyExitPoint;
 //                int xPress3 = (int)p3.getX();
 //                int yPress3 = (int)p3.getY();
-//                while (xPress3 % curr.blockSize != 0) {
+//                while (xPress3 % activePark.blockSize != 0) {
 //                    xPress3--;
 //                }
-//                while (yPress3 % curr.blockSize != 0 ) {
+//                while (yPress3 % activePark.blockSize != 0 ) {
 //                    yPress3--;
 //                }
 //                
 //                g.setColor(Color.white);
 //                g.fillRect(xPress, yPress, 60, 60);
-//                if (!curr.labelsShowing) {
+//                if (!activePark.labelsShowing) {
 //                    g.setColor(Color.black);
 //                    g.drawRect(xPress, yPress, 60, 60);
 //                }
@@ -1571,17 +1584,18 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                 
                 
 //                g.setColor(Color.red);
-//                g.fillRect(xPress, yPress, curr.blockSize, curr.blockSize);   
+//                g.fillRect(xPress, yPress, activePark.blockSize, activePark.blockSize);   
 //                g.setColor(Color.yellow);
-//                g.fillRect(xPress2, yPress2, curr.blockSize, curr.blockSize);
+//                g.fillRect(xPress2, yPress2, activePark.blockSize, activePark.blockSize);
 //                g.setColor(Color.lightGray);
-//                g.fillRect(xPress3, yPress3, curr.blockSize, curr.blockSize);
- 
-            for (Family t : curr.Familys) {
-                    t.draw(g);   
+//                g.fillRect(xPress3, yPress3, activePark.blockSize, activePark.blockSize);
+            ArrayList<Family> FamCopy = new ArrayList<>(activePark.Familys);
+
+            for (Family fam : FamCopy) {
+                fam.draw(g);
             }
            }
-            if (curr.nicegraphics) {
+            if (activePark.nicegraphics) {
             // Draw the time bar for the sun/moon going across the bar to indicate the time
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             g.setColor(Color.BLACK);
@@ -1661,7 +1675,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             
             int hoursWorthDistance = 112;
             double distance = 0;
-            distance = ((double)hoursWorthDistance * ((double)curr.dailySecondsSurpassed / 3600)) - ((double)7 * hoursWorthDistance);
+            distance = ((double)hoursWorthDistance * ((double)activePark.dailySecondsSurpassed / 3600)) - ((double)7 * hoursWorthDistance);
           
             
             // Draw the sun/ mooon
@@ -1676,7 +1690,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             loc = loc / 5;
             
             // DOES NOT WORK
-            for (Attraction a: curr.rides) {
+            for (Attraction a: activePark.rides) {
                 if (a.closed) {
                     g.setColor(Color.red);
                     float f=40.0f; // font size.
@@ -1688,16 +1702,16 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             }
             
 //           } else {
-//               curr.simEndedArea.setVisible(true);
+//               activePark.simEndedArea.setVisible(true);
 //               this.setBackground(Color.black);
 //               this.setOpaque(true);
-//               curr.newDayButton.setVisible(true);
+//               activePark.newDayButton.setVisible(true);
 //           }
 
             g.setColor(Color.white);
-            g.fillOval(curr.parkExitPoint.x, curr.parkExitPoint.y, 10, 10);
+            g.fillOval(activePark.parkExitPoint.x, activePark.parkExitPoint.y, 10, 10);
             g.setColor(Color.red);
-            g.drawOval(curr.parkExitPoint.x, curr.parkExitPoint.y, 10, 10);
+            g.drawOval(activePark.parkExitPoint.x, activePark.parkExitPoint.y, 10, 10);
 
         
         }

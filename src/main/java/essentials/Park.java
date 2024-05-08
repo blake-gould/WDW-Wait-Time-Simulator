@@ -434,7 +434,7 @@ public class Park {
     */
     public void configureFamilys() {
         // ADD THE Initial FamilyS
-        for (int x = 130; x <= 1280; x += 10) {
+        /*for (int x = 130; x <= 1280; x += 10) {
             for (int y = 830; y <= 870; y += 10) {
                 Random random = new Random();
                 int rand = random.nextInt(3);
@@ -458,7 +458,7 @@ public class Park {
                 Familys.add(Family);
                 Familysmaster.add(Family); 
             }
-        }
+        }*/
         
         /*
         The first Family that is tracked is personally set
@@ -515,27 +515,14 @@ public class Park {
     */
     public void assignFastpasses() {
         Collections.shuffle(fastpasses);
-        int index = 0;
-        for (Family g: Familysmaster) {
-
-                g.fpasses.add(0,fastpasses.get(index));
-                
-                index++;
-            
-        }
-        for (Family g: Familysmaster) {
-
-                g.fpasses.add(1,fastpasses.get(index));
-                
-                index++;
-            
-        }
-        for (Family g: Familysmaster) {
-
-                g.fpasses.add(2,fastpasses.get(index));
-                
-                index++;
-            
+        int fastPassIndex = 0;
+        for (int i=0; i < 3; i++) {
+            for (Family fam: Familysmaster) {
+                if (fastPassIndex < fastpasses.size()) {
+                    fam.fpasses.add(i,fastpasses.get(fastPassIndex));
+                    fastPassIndex++;
+                }
+            }    
         }
         
     }
@@ -660,8 +647,10 @@ public class Park {
                     Attraction curr = g.attractionDestination;
                     boolean foundARideableRide = false;
                     for (Attraction a2 : rides) {
-                        
-                        if (getExhaust(g, curr) - getExhaust(g, a2) > 15 && !a2.closed) {
+                        if (curr == null) {
+                            determineDestination(g, g.attractionDestination);
+                            break;
+                        } else if (getExhaust(g, curr) - getExhaust(g, a2) > 15 && !a2.closed) {
 
                             curr.line.remove(g);
                             g = earlyExit(g);
@@ -671,8 +660,7 @@ public class Park {
                             }
                             break;
 
-                        }
-                        if (getExhaust(g,a2) < 100) {
+                        } else if (getExhaust(g,a2) < 100) {
                             foundARideableRide = true;
                         }
                     }
@@ -745,7 +733,7 @@ public class Park {
         for (Family g: Familys) {
             if(g.location.x == parkExitPoint.x && g.location.y == parkExitPoint.y && g.destination.x == parkExitPoint.x && g.destination.y == parkExitPoint.y) {
                 Familystoremove.add(g);
-                d.hubFamilysToAdd.add(g);  
+                d.hubFamiliesToAdd.add(g);  
                 g.transferred = true;
             }
         }
@@ -1157,6 +1145,7 @@ public class Park {
     public int getExhaust(Family g, Attraction a) {
         int Exhaust = 0;
             // Exhaust from waiting
+            
             Exhaust += a.totalWaitTime;
 
             // Exhaust from traveling
@@ -1188,7 +1177,6 @@ public class Park {
     
     /**/
     public Family earlyExit(Family g) {
-
         g.setLocation(g.attractionDestination.getEarlyExitPoint());
         Attraction destination = determineDestination(g, g.attractionDestination);
         g.setDestination(destination);

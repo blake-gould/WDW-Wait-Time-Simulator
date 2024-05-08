@@ -42,7 +42,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         
         //(0)
-        Attraction hauntedMansion = new Attraction("Haunted Mansion", 1125, "Adult", 7.5, 15, 250, 160, Color.magenta);
+        Attraction hauntedMansion = new Attraction("SpOoPy Mansion", 1125, "Adult", 7.5, 15, 250, 160, Color.magenta);
         rides.add(hauntedMansion);
         /*
         //(1)
@@ -54,7 +54,7 @@ public class MainFrame extends javax.swing.JFrame {
         Attraction splashMountain = new Attraction("Splash Mountain", 3000, "Young Adult", 11, 20);
         splashMountain.setGraphics(30, 300, Color.BLUE);
         rides.add(splashMountain);
-        
+        splashMountain
         //(3)
         Attraction dumbo = new Attraction("Dumbo", 7500, "Child", 1.5, 5);
         dumbo.setGraphics(1200, 150,  Color.gray);
@@ -171,20 +171,35 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     public void laodHS() {
-    ArrayList<Attraction> rides = csvFile("attraction saves\\Hollywood Studios.csv");
-    Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    
-    myImage image = new myImage("map images\\hollywoodstudios.jpg");
-    image.minimalize(10);
-    image.wash(0.62);
-    
-    ArrayList<Point> list = new ArrayList<>();
-    list.add(new Point(-266+ (dim.width / 2), 108+ (dim.height/2)));
-    list.add(new Point(-783+ (dim.width / 2), -391+ (dim.height/2)));
-    Park hs = new Park("Hollywood Studios", rides, "park drawings saves\\hollywoodstudios.txt", Color.red, image, list, new Point(1509,487), 2);
-    parks.add(hs);
+        ArrayList<Attraction> rides = csvFile("attraction saves\\Hollywood Studios.csv");
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        myImage image = new myImage("map images\\hollywoodstudios.jpg");
+        image.minimalize(10);
+        image.wash(0.62);
+        
+        ArrayList<Point> list = new ArrayList<>();
+        list.add(new Point(-266+ (dim.width / 2), 108+ (dim.height/2)));
+        list.add(new Point(-783+ (dim.width / 2), -391+ (dim.height/2)));
+        Park hs = new Park("Hollywood Studios", rides, "park drawings saves\\hollywoodstudios.txt", Color.red, image, list, new Point(1509,487), 2);
+        parks.add(hs);
     }
     
+    public void loadEP() {
+        ArrayList<Attraction> rides = csvFile("attraction saves\\Epcot.csv");
+        
+        myImage image = new myImage("map images\\epcot.jpg");
+        image.minimalize(10);
+        image.wash(0.62);
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        ArrayList<Point> list = new ArrayList<>();
+        list.add(new Point(-750+ (dim.width / 2), 217+ (dim.height/2)));
+        list.add(new Point(-750+ (dim.width / 2), -341+ (dim.height/2)));
+        list.add(new Point(-326+ (dim.width / 2), -35+ (dim.height/2)));
+        list.add(new Point(370+ (dim.width / 2), -51+ (dim.height/2)));
+        parks.add(new Park("Epcot", rides, "park drawings saves\\epcot.txt", Color.white, image, list, new Point(148,411), 1));
+    }
+
     public ArrayList<Attraction> csvFile(String file) {
         ArrayList<Attraction> rides = new ArrayList<>();
         try {
@@ -212,28 +227,12 @@ public class MainFrame extends javax.swing.JFrame {
         return rides;
     }
     
-    public void loadEP() {
-        ArrayList<Attraction> rides = csvFile("attraction saves\\Epcot.csv");
-        
-        myImage image = new myImage("map images\\epcot.jpg");
-        image.minimalize(10);
-        image.wash(0.62);
-        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        ArrayList<Point> list = new ArrayList<>();
-        list.add(new Point(-750+ (dim.width / 2), 217+ (dim.height/2)));
-        list.add(new Point(-750+ (dim.width / 2), -341+ (dim.height/2)));
-        list.add(new Point(-326+ (dim.width / 2), -35+ (dim.height/2)));
-        list.add(new Point(370+ (dim.width / 2), -51+ (dim.height/2)));
-        parks.add(new Park("Epcot", rides, "park drawings saves\\epcot.txt", Color.white, image, list, new Point(148,411), 1));
-    }
-    
     public void run() {
         loadMK();
         loadEP();
         laodHS();
         loadAK();
         Display dp = new Display(parks);
-        
     }
 
     @SuppressWarnings("unchecked")
