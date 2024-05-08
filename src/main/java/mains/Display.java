@@ -11,6 +11,7 @@ import essentials.Attraction;
 import graphics.Bag;
 import graphics.Banner;
 import graphics.Flag;
+import graphics.MagnifyingGlass;
 import other.myImage;
 import timers.Task;
 import timers.parkTimer;
@@ -1712,8 +1713,6 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             g.fillOval(activePark.parkExitPoint.x, activePark.parkExitPoint.y, 10, 10);
             g.setColor(Color.red);
             g.drawOval(activePark.parkExitPoint.x, activePark.parkExitPoint.y, 10, 10);
-
-        
         }
         
         public void drawHover(Graphics g) throws ConcurrentModificationException  {
