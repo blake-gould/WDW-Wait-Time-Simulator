@@ -84,8 +84,11 @@ public class Display extends javax.swing.JFrame {
     public boolean flags = true;
     
     public int loc;
+    public int timerMultiplier = 1;
     
     public ArrayList<Family> hubFamiliesToAdd = new ArrayList<>();
+    private final long cloudStartTime = System.currentTimeMillis();
+
     
     
     
@@ -297,7 +300,7 @@ public class Display extends javax.swing.JFrame {
                 }
                 tmr = tmr.changeTimer(1);
                 setClocks();
-                
+                timerMultiplier = 1;
             }
         });
         
@@ -310,6 +313,8 @@ public class Display extends javax.swing.JFrame {
                 }
                 tmr = tmr.changeTimer(5);
                 setClocks();
+                timerMultiplier = 5;
+
             }
         });
         
@@ -322,6 +327,7 @@ public class Display extends javax.swing.JFrame {
                 }
                 tmr = tmr.changeTimer(15);
                 setClocks();
+                timerMultiplier = 15;
             }
         });
         
@@ -334,6 +340,7 @@ public class Display extends javax.swing.JFrame {
                 }
                 tmr = tmr.changeTimer(30);
                 setClocks();
+                timerMultiplier = 30;
             }
         });
         
@@ -1224,22 +1231,6 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             }
             
             drawHover(g);
-            
-            
-           
-          /* g.setColor(Color.white);
-           switch (currnum) {
-                case 0: g.fillOval(0, size.height - 50, size.width, 100);  break; 
-                case 1: g.fillOval(-50, 0, 100, size.height); break;
-                case 2: g.fillOval(0, -50, size.width, 100); break;
-                case 3: g.fillOval(size.width - 50, 0, 100, size.height);break;
-                
-            }*/
-            
-        
-                       
-         
-
         }
         
         public void setSunColors() {
@@ -1464,33 +1455,39 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
             
             
            // CLOUDS
-           for (int j = 50; j < 900; j = j+200) {
+           // CLOUDS
+            g.setColor(new Color(255, 255, 255, 200));
+            int screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
 
-           for (int i = 0; i < 1900; i = i+300) {
-                   if (i + activePark.currentTime[2] < 1900) {
-                        g.setColor(new Color(255, 255, 255, 200));
-                        //g.setColor(Color.white);
-                        int num = i + activePark.currentTime[2] * 4;
-                        while (num > 1800) {
-                            num = num - 1800;
+            // Calculate elapsed time in seconds
+            long now = System.currentTimeMillis();
+            double elapsedSeconds = (now - cloudStartTime) / 1000.0;
+
+            // Control how fast the clouds move (pixels per second)
+            double scrollSpeed = 30.0 * timerMultiplier; // adjust to preference
+            int offset = (int)((elapsedSeconds * scrollSpeed) % screenWidth);
+
+            for (int y = 50; y < 900; y += 200) {
+                for (int x = 0; x < screenWidth + 300; x += 300) {
+                    int cloudX = (x - offset + screenWidth) % screenWidth;
+
+                    int cloudY = y;
+                    int xIndex = x / 100;
+                    if (xIndex % 9 != 0) {
+                        if (xIndex % 2 == 0) {
+                            cloudY += 66;
+                        } else if (xIndex % 3 == 0) {
+                            cloudY += 132;
                         }
-                        int num2 = j;
-                        if ((i/100) % 9 == 0) {
-                            
-                        } 
-                        else if ((i/100) % 2 == 0) {
-                            num2 += 66;
-                        }
-                        else if ((i/100) % 3 == 0) {
-                            num2 += 132;
-                        }
-                        g.fillOval(num + 12, num2 + 10, 30, 30);
-                        g.fillOval(num + 34, num2, 20, 20);
-                        g.fillOval(num, num2, 20, 20);
-                        
-                   }
-           }
-           }
+                    }
+
+                    g.fillOval(cloudX + 12, cloudY + 10, 30, 30);
+                    g.fillOval(cloudX + 34, cloudY, 20, 20);
+                    g.fillOval(cloudX, cloudY, 20, 20);
+                }
+            }
+
+
            }
            
            g.setColor(Color.blue);
