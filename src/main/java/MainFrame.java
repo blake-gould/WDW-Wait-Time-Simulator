@@ -211,8 +211,6 @@ public class MainFrame extends javax.swing.JFrame {
             {  
                 String curr = sc.nextLine();
                 String[] currs = curr.split(",");
-                System.out.println(curr);
-                System.out.println(Integer.valueOf(currs[8]) + " " + Integer.valueOf(currs[9]) + " " +  Integer.valueOf(currs[10]));
                 Color c = new Color(Integer.valueOf(currs[8]), Integer.valueOf(currs[9]), Integer.valueOf(currs[10]));
                 
                 Attraction a = new Attraction(currs[1], Double.parseDouble(currs[2]), currs[3], Double.parseDouble(currs[4]), Integer.valueOf(currs[5]), Integer.valueOf(currs[6]), Integer.valueOf(currs[7]), c);

@@ -577,9 +577,7 @@ public class Display extends javax.swing.JFrame {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            //System.out.println(".keyPressed()");
             int keyCode = e.getKeyCode();
-        //System.out.println("keyPressed: "+e);
         switch( keyCode ) { 
             case KeyEvent.VK_UP:
                 // handle up 
@@ -672,7 +670,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        panel.setPreferredSize(new java.awt.Dimension(1900, 900));
+        panel.setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
 
         paknam.setFont(new java.awt.Font("Blackadder ITC", 1, 48)); // NOI18N
         paknam.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -856,7 +854,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 562, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(10, 10, 10)
                 .addGroup(subpanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
                     .addComponent(FamilyInfoList, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -872,7 +870,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                         .addComponent(FamilyInfoList, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -964,7 +962,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                     .addGroup(panelLayout.createSequentialGroup()
                         .addGap(43, 43, 43)
                         .addComponent(subpanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 654, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(subpanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1035,24 +1033,19 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                     else if (hover && hubgraphics) {
                         if (me.getX() < 100) {
                             currnum = 3;
-
-                            
-
                         } else if (me.getX() > dim.width - 100) {
                             currnum = 1;
-                        
-
                         } else if (me.getY() < 100) {
                             currnum = 0;
-               
-
                         }  else if (me.getY() > dim.height - 100) {
                             currnum = 2;
-                        }                         
-                        hubgraphics = false;
-                        activePark = parks.get(currnum);
-                        activePark.dp = panel;
-                        adjustButtons();
+                        }
+                        if (currnum != 4) {
+                            hubgraphics = false;
+                            activePark = parks.get(currnum);
+                            activePark.dp = panel;
+                            adjustButtons();
+                        }
                     }
                     
                     if (activePark != null) {
@@ -1085,12 +1078,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
                                 
                             }
                         }    
-                    }
-                    
-                    System.out.println(me.getX() + "," + me.getY());
-                    
-                    
-                    
+                    }          
                 }    
             });
             
@@ -1190,7 +1178,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         }
         
         public void initializeBG(Graphics g) {
-            g.setColor(Color.white);
+            g.setColor(Color.decode("#939F5C"));
             Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
             g.fillRect(0, 0, size.width, size.height); 
             
@@ -1282,76 +1270,46 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         }
         
         public void drawHubGraphics(Graphics g) throws ConcurrentModificationException {
-            g.setColor(Color.white);
+            final int RADIUS = 100, DIAM = RADIUS * 2, MARKER = 10;
             Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-            //g.fillRect(0, 0, size.width, size.height);
-            g.setColor(Color.blue);
-            g.fillOval(size.width / 2 - 100, size.height / 6, 200, 200);
-            g.setColor(Color.red);
-            g.fillOval(size.width / 2 - 100, (size.height - 200) - size.height / 6, 200, 200);
-            g.setColor(Color.green);
-            g.fillOval(size.width / 6, size.height / 2 - 100, 200, 200);
-            g.setColor(Color.yellow);
-            g.fillOval(((size.width) - 200) - size.width / 6, size.height / 2 - 100, 200, 200);
+            int cx = size.width / 2, cy = size.height / 2;
+
+            // Hub circles
+            g.setColor(Color.blue);   g.fillOval(cx - RADIUS, size.height / 6, DIAM, DIAM);
+            g.setColor(Color.red);    g.fillOval(cx - RADIUS, (size.height - DIAM) - size.height / 6, DIAM, DIAM);
+            g.setColor(Color.green);  g.fillOval(size.width / 6, cy - RADIUS, DIAM, DIAM);
+            g.setColor(Color.yellow); g.fillOval((size.width - DIAM) - size.width / 6, cy - RADIUS, DIAM, DIAM);
+
+            // Center box
             g.setColor(Color.black);
-            g.drawRect(size.width / 6 + 200, size.height / 6 + 200, (2 * size.width) / 3 - 400, (2* size.height) / 3 - 400);
-            g.setColor(Color.black);
-            g.fillRect(spawn.x, spawn.y, 10, 10);
+            g.drawRect(size.width / 6 + DIAM, size.height / 6 + DIAM, 
+                       (2 * size.width) / 3 - 2 * DIAM, (2 * size.height) / 3 - 2 * DIAM);
+
+            // Spawn and entrances
+            g.fillRect(spawn.x, spawn.y, MARKER, MARKER);
             g.setColor(Color.red);
-            g.fillRect(mkentrance.x, mkentrance.y, 10, 10);
-            g.fillRect(epentrance.x, epentrance.y, 10, 10);
-            g.fillRect(hsentrance.x, hsentrance.y, 10, 10);
-            g.fillRect(akentrance.x, akentrance.y, 10, 10);
-            
-            ArrayList<Family> hubFamiliesCopy = new ArrayList<>(hubFamilies);
-            for (Family x: hubFamiliesCopy) {
-                    x.draw(g);    
-            }
-    
-//            mkflagback.draw(g);
-//            akflagback.draw(g);
-//            hsflagback.draw(g);
-//            epflagback.draw(g);
+            for (Point p : new Point[]{mkentrance, epentrance, hsentrance, akentrance})
+                g.fillRect(p.x, p.y, MARKER, MARKER);
+
+            // Families
+            for (Family f : new ArrayList<>(hubFamilies))
+                f.draw(g);
+
+            // Flags
             if (flags) {
                 mkflag.draw(g);
                 akflag.draw(g);
                 hsflag.draw(g);
-                epflag.draw(g);    
+                epflag.draw(g);
             }
-            
-            
-            
-        
         }
+
         
         public void drawParkGraphics(Graphics g) throws ConcurrentModificationException {
             
             
             g.drawImage(activePark.image.imageVar, 0, 0, null);  
             
-           /*if (activePark.counter < 3000 ) {
-                
-                if (activePark.counter % 1 == 0) {
-                    for (int i = 1; i < activePark.innerfills.length - 1; i++) {
-                        for (int j = 1; j < activePark.innerfills[i].length - 1; j++) {
-                            if (activePark.innerfills[i][j] == true) {
-                                if (!activePark.bools[i][j + 1]) {
-                                    activePark.innerfills[i][j+1] = true;
-                                }
-                                if (!activePark.bools[i + 1][j]) {
-                                    activePark.innerfills[i + 1][j] = true; 
-                                }
-                                if (!activePark.bools[i - 1][j]) {
-                                    activePark.innerfills[i - 1][j] = true;  
-                                }
-                                if (!activePark.bools[i][j - 1]) {
-                                   activePark.innerfills[i][j-1] = true;  
-                                } 
-                            }
-                        }
-                    }  
-                }   
-            }*/
            // Fills the background with the sky color
            if (activePark.counter < 3000)/*4 seconds*/ {
                 for (int i = 1; i < activePark.fills.length - 1; i++) {
@@ -1536,171 +1494,87 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
            }
            
            g.setColor(Color.blue);
-           //g.fillPolygon(xPoints, yPoints, WIDTH);
-            
-               
-            //Flag flag = new Flag(80, 80, 75, 60, Color.black, "Blake Gould", new java.awt.Font("SansSerif", 1, 18), 3);
-            //flag.draw(g);
-//                Point p = a.getAccessPoint();
-//                int xPress = (int)p.getX();
-//                int yPress = (int)p.getY();
-//                    while (xPress % activePark.blockSize != 0) {
-//                        xPress--;
-//                    }
-//                    while (yPress % activePark.blockSize != 0 ) {
-//                        yPress--;
-//                    }
-//                
-//                
-//                
-//                Point p2 = a.getExitPoint();
-//                int xPress2 = (int)p2.getX();
-//                int yPress2 = (int)p2.getY();
-//                while (xPress2 % activePark.blockSize != 0) {
-//                    xPress2--;
-//                }
-//                while (yPress2 % activePark.blockSize != 0 ) {
-//                    yPress2--;
-//                }
-//                
-//                Point p3 = a.earlyExitPoint;
-//                int xPress3 = (int)p3.getX();
-//                int yPress3 = (int)p3.getY();
-//                while (xPress3 % activePark.blockSize != 0) {
-//                    xPress3--;
-//                }
-//                while (yPress3 % activePark.blockSize != 0 ) {
-//                    yPress3--;
-//                }
-//                
-//                g.setColor(Color.white);
-//                g.fillRect(xPress, yPress, 60, 60);
-//                if (!activePark.labelsShowing) {
-//                    g.setColor(Color.black);
-//                    g.drawRect(xPress, yPress, 60, 60);
-//                }
-                
-                
-                
-                
-                
-//                g.setColor(Color.red);
-//                g.fillRect(xPress, yPress, activePark.blockSize, activePark.blockSize);   
-//                g.setColor(Color.yellow);
-//                g.fillRect(xPress2, yPress2, activePark.blockSize, activePark.blockSize);
-//                g.setColor(Color.lightGray);
-//                g.fillRect(xPress3, yPress3, activePark.blockSize, activePark.blockSize);
+
             ArrayList<Family> FamCopy = new ArrayList<>(activePark.Familys);
 
             for (Family fam : FamCopy) {
                 fam.draw(g);
             }
            }
-            if (activePark.nicegraphics) {
-            // Draw the time bar for the sun/moon going across the bar to indicate the time
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 800, dim.width, 50);
-            colors = new int[5][3];
-            setSunColors();
-            int divisions = dim.width / 5;
-            int colorChangeInv = divisions / 5;
-            int currInvCounter = 0;
-            int x = 0;
-            int y = 800;
-            int[] currColor = {colors[0][0], colors[0][1], colors[0][2]};
-            int hourCoverage = 15;
-            int hourChangeInv = divisions / hourCoverage;
-            int currHour = 7;
+           if (activePark.nicegraphics) {
+    // Get screen size
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    int screenWidth = screenSize.width;
+    int barY = screenSize.height - 100;
+    int barHeight = 50;
 
-            for (int i = 0; i < divisions; i++) {
-                for (int j = 0; j < 3; j++) {
-                    if (currColor[j] > 255) {
-                        currColor[j] = 255;
-                    }
-                    if (currColor[j] < 0) {
-                        currColor[j] =0;
-                    }
-                }
-                Color color = new Color(currColor[0], currColor[1], currColor[2]);
-                
-                if (currInvCounter < colorChangeInv ) {
-                currColor[0] = ((colors[1][0] - colors[0][0]) / colorChangeInv) + currColor[0];
-                currColor[1] =((colors[1][1] - colors[0][1]) / colorChangeInv) + currColor[1];
-                currColor[2] =  ((colors[1][2] - colors[0][2]) / colorChangeInv) + currColor[2];   
-                } else if (currInvCounter < (2*colorChangeInv)) {
-                currColor[0] = ((colors[2][0] - colors[1][0]) / colorChangeInv) + currColor[0];
-                currColor[1] =((colors[2][1] - colors[1][1]) / colorChangeInv) + currColor[1];
-                currColor[2] =  ((colors[2][2] - colors[1][2]) / colorChangeInv) + currColor[2];   
-                } else if (currInvCounter < (3*colorChangeInv)) {
-                currColor[0] = ((colors[3][0] - colors[2][0]) / colorChangeInv) + currColor[0];
-                currColor[1] =((colors[3][1] - colors[2][1]) / colorChangeInv) + currColor[1];
-                currColor[2] =  ((colors[3][2] - colors[2][2]) / colorChangeInv) + currColor[2];       
-                } else if (currInvCounter < (4*colorChangeInv)) {
-                currColor[0] = ((colors[4][0] - colors[3][0]) / colorChangeInv) + currColor[0];
-                currColor[1] =((colors[4][1] - colors[3][1]) / colorChangeInv) + currColor[1];
-                currColor[2] =  ((colors[4][2] - colors[3][2]) / colorChangeInv) + currColor[2]; 
-                }
-                
-                
-                if (currInvCounter % hourChangeInv == 0) {
-                    g.setColor(Color.black);
-                    if (currHour == 13) {
-                        currHour = 1;
-                    }
-                    g.drawString("" + currHour, x, y);
-                    currHour++;
-                }
-                currInvCounter++;
-                
-                backColors.add(color);
-                g.setColor(color);
-                
-                
-                
-                
-                
-                
-                
-                
-                g.fillRect(x, y, 5, 50);
-                x += 5;
- 
+    // Draw the background of the time bar
+    g.setColor(Color.BLACK);
+    g.fillRect(0, barY, screenWidth, barHeight);
+
+    // Initialize color gradient settings
+    colors = new int[5][3]; // Preset color transitions for sky
+    setSunColors();
+    int segments = screenWidth / 5;
+    int gradientSteps = segments / 5;
+    int timeLabelInterval = segments / 15; // Place a time label every 15 segments
+    int[] currentColor = {colors[0][0], colors[0][1], colors[0][2]};
+    int x = 0;
+    int currentHour = 7;
+    int stepCounter = 0;
+
+    // Draw the gradient sky bar
+    for (int i = 0; i < segments; i++) {
+        // Clamp RGB values
+        for (int j = 0; j < 3; j++) {
+            currentColor[j] = Math.max(0, Math.min(255, currentColor[j]));
+        }
+
+        // Choose which color transition phase we are in
+        int phase = stepCounter / gradientSteps;
+        if (phase < 4) {
+            for (int j = 0; j < 3; j++) {
+                currentColor[j] += (colors[phase + 1][j] - colors[phase][j]) / gradientSteps;
             }
-            
-            
-            
-            
-            
-            
-            
-            int hoursWorthDistance = 112;
-            double distance = 0;
-            distance = ((double)hoursWorthDistance * ((double)activePark.dailySecondsSurpassed / 3600)) - ((double)7 * hoursWorthDistance);
-          
-            
-            // Draw the sun/ mooon
-            if (distance < hoursWorthDistance * 11) {
-                g.setColor(Color.yellow);
-                g.fillOval((int)distance - 25 , 800, 50, 50);    
-            } else {
-                g.setColor(Color.cyan);
-                g.fillOval((int)distance - 25 , 800, 50, 50);  
-            }
-            loc = (int)distance - 25;
-            loc = loc / 5;
-            
-            // DOES NOT WORK
-            for (Attraction a: activePark.rides) {
-                if (a.closed) {
-                    g.setColor(Color.red);
-                    float f=40.0f; // font size.
-                    g.setFont(g.getFont().deriveFont(f));
-                    g.drawString(("X"), x , y + 10);
-                }
-            }
-            
-            }
+        }
+
+        // Draw color segment
+        Color segmentColor = new Color(currentColor[0], currentColor[1], currentColor[2]);
+        g.setColor(segmentColor);
+        g.fillRect(x, barY, 5, barHeight);
+        backColors.add(segmentColor);
+
+        // Draw hour markers
+        if (stepCounter % timeLabelInterval == 0) {
+            g.setColor(Color.BLACK);
+            g.drawString(String.valueOf(currentHour), x, barY);
+            currentHour = (currentHour == 12) ? 1 : currentHour + 1;
+        }
+
+        x += 5;
+        stepCounter++;
+    }
+
+    // Calculate sun/moon position
+    int pixelsPerHour = 112;
+    double timePassedHours = (double) activePark.dailySecondsSurpassed / 3600;
+    double sunX = (pixelsPerHour * timePassedHours) - (pixelsPerHour * 7); // starts at 7 AM
+
+    // Draw sun or moon
+    g.setColor((sunX < pixelsPerHour * 11) ? Color.YELLOW : Color.CYAN);
+    g.fillOval((int) sunX - 25, barY, 50, 50);
+    loc = ((int) sunX - 25) / 5;
+
+    // Attempt to mark closed attractions — this part may not display correctly yet
+    for (Attraction attraction : activePark.rides) {
+        if (attraction.closed) {
+            g.setColor(Color.RED);
+            g.setFont(g.getFont().deriveFont(40.0f));
+            g.drawString("X", x, barY + 10); // FIXME: This may need a more accurate position
+        }
+    }
+}
+
             
 //           } else {
 //               activePark.simEndedArea.setVisible(true);

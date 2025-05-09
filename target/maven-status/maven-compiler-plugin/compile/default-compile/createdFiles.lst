@@ -25,6 +25,7 @@ MainFrame.class
 mains\Display$14.class
 essentials\Park$2.class
 mains\Display$5.class
+timers\parkTimer$Task.class
 essentials\Park$5.class
 graphics\MagnifyingGlass.class
 mains\Boardmaker$myPanel2$2.class

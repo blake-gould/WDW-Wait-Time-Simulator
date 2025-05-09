@@ -567,24 +567,23 @@ public class Park {
         
     }
     
-    /*
-    Determines if a Family should move or not. It also determines
-    if they go up, left, right, down when they move. It also determines
-    If they enter a line queue*/
-    // "occupied" currently has no function
     public int counter;
     public void FamilyMove() {
         
-        for (Family g: familysToAdd) {
-            Familys.add(g);
+        ArrayList<Family> toAdd;
+        synchronized (this) {
+            toAdd = familysToAdd;
+            familysToAdd = new ArrayList<>();
         }
-        familysToAdd = new ArrayList<>();
+        Familys.addAll(toAdd);
         
         ArrayList<Family> familysToDetermineDestination = new ArrayList<>();
         for (Family g: Familys) {
-            if (g.transferred) {
-                familysToDetermineDestination.add(g);
-                g.transferred = false;
+            if (g != null) {
+                if (g.transferred) {
+                    familysToDetermineDestination.add(g);
+                    g.transferred = false;
+                }
             }
         }
         
@@ -639,10 +638,11 @@ public class Park {
             for (Family g: a.ride) {
                 g.expTimer += 0.00083333333333333333333333333333333333333333333333333333;   
             }
-            // If the Family is in line and no other Familys have exited this movement,
-            // If the exaust is 15 less at some other attraction, the Family early exits
+            
+            
             // the line and goes to that new location. The Family will not early exit from a fastpass line
             for (Family g: a.line) {
+                // If the Family is in line and no other Familys have exited this movement,
                 if (!oneExiting) {
                     Attraction curr = g.attractionDestination;
                     boolean foundARideableRide = false;
@@ -650,7 +650,8 @@ public class Park {
                         if (curr == null) {
                             determineDestination(g, g.attractionDestination);
                             break;
-                        } else if (getExhaust(g, curr) - getExhaust(g, a2) > 15 && !a2.closed) {
+                        // If the exaust is 25 less at some other attraction, the Family early exits
+                        } else if (getExhaust(g, curr) - getExhaust(g, a2) > 25 && !a2.closed) {
 
                             curr.line.remove(g);
                             g = earlyExit(g);
@@ -659,19 +660,23 @@ public class Park {
                                 trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime [1] + ")");
                             }
                             break;
-
+                        // Check to make sure that there is still a ride in this park that the family would like to experience
                         } else if (getExhaust(g,a2) < 100) {
                             foundARideableRide = true;
                         }
                     }
+                    // IF the family could not find a ride in the whole park that they would like to experience
                     if (!foundARideableRide) {
-                        curr.line.remove(g);
-                        g = earlyExit(g);
-                        oneExiting = true;
-                        if (g.tracking) {
-                            trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime [1] + ")");
+                        if (curr != null) {
+                            curr.line.remove(g);
+                            g = earlyExit(g);
+                            oneExiting = true;
+                            if (g.tracking) {
+                                trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime [1] + ")");
+                            }
+                            break;    
                         }
-                        break;
+                        
                     }
                 }
             }
@@ -828,7 +833,8 @@ public class Park {
             }
         }
         
-    }  
+    } 
+    
     
     /*
     If the simulation is actively running, 
@@ -1189,7 +1195,6 @@ public class Park {
     */
     public void leavePark(Family g) {
         g.destination.x = getParkExitPoint().x;
-        System.out.print(getParkExitPoint().x + " , " + getParkExitPoint().y);
         g.destination.y = getParkExitPoint().y;
         g.attractionDestination = null;
         g.oldPark = parknum;

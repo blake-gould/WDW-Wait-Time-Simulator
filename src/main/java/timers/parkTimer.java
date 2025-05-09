@@ -1,82 +1,66 @@
 package timers;
 
-
-import timers.parkTimerTask;
-import java.util.Map;
-import java.util.Random;
-import java.util.TimerTask;
-import java.util.Timer;
-import java.util.TreeMap;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+public class parkTimer {
+    
+    private int multiplier;
+    private final ArrayList<parkTimerTask> tasks;
+    private Timer timer;
 
-/**
- *
- * @author blake
- */
-public class parkTimer extends Timer{
-    
-    public int multiplier;
-    public ArrayList<parkTimerTask> tasks;
-
-    
-    
-    
-    
-    
     public parkTimer(int multiplier, ArrayList<parkTimerTask> tasks) {
         this.multiplier = multiplier;
-        this.tasks = tasks;
+        this.tasks = new ArrayList<>(tasks); // defensive copy
+        this.timer = new Timer();
     }
-    
+
     public parkTimer changeTimer(int multiplier) {
         this.multiplier = multiplier;
         this.pause();
         return this.resume();
-        
     }
-    
+
     public void pause() {
-        this.cancel();
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+        }
     }
-    
+
     public parkTimer resume() {
-        parkTimer replacement = new parkTimer(multiplier, tasks);
-        replacement.restart();
-        return replacement;          
+        this.timer = new Timer();
+        scheduleAllTasks();
+        return this;
     }
-    
+
     public void start() {
+        scheduleAllTasks();
+    }
+
+    private void scheduleAllTasks() {
         for (parkTimerTask p : tasks) {
             Task t = new Task(p.runnable);
             if (p.interval == -1) {
-                this.schedule(t, p.delay );    
+                timer.schedule(t, p.delay);
             } else {
-                this.schedule(t, p.delay, p.interval / multiplier);
+                long adjustedInterval = Math.max(1, p.interval / multiplier); // prevent 0 or negative
+                timer.schedule(t, p.delay, adjustedInterval);
             }
-            
+        }
+    }
+
+    private static class Task extends TimerTask {
+        private final Runnable runnable;
+
+        public Task(Runnable runnable) {
+            this.runnable = runnable;
         }
 
+        @Override
+        public void run() {
+            runnable.run();
+        }
     }
-    
-    private void restart() {
-        for (parkTimerTask p : tasks) {
-            Task t = new Task(p.runnable);
-            if (p.interval == -1) {
-                // do nothing   
-            } else {
-                this.schedule(t, p.delay, p.interval / multiplier);
-            }
-            
-        }    
-    }
-
-    
-    
-    
 }
