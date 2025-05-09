@@ -122,7 +122,7 @@ public class Park {
         // Creates and schedules a timer task for 
         // the addition of each group of people
         int delay = 0;
-        for (int i = 0; i < 2; i ++) {
+        for (int i = 0; i < 4; i ++) {
             delay += 25000;
             Runnable x = new Runnable() {
                 @Override
@@ -434,7 +434,7 @@ public class Park {
     */
     public void configureFamilys() {
         // ADD THE Initial FamilyS
-        /*for (int x = 130; x <= 1280; x += 10) {
+        for (int x = 130; x <= 1280; x += 10) {
             for (int y = 830; y <= 870; y += 10) {
                 Random random = new Random();
                 int rand = random.nextInt(3);
@@ -458,7 +458,7 @@ public class Park {
                 Familys.add(Family);
                 Familysmaster.add(Family); 
             }
-        }*/
+        }
         
         /*
         The first Family that is tracked is personally set

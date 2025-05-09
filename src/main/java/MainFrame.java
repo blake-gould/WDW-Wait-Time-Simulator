@@ -42,7 +42,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         
         //(0)
-        Attraction hauntedMansion = new Attraction("SpOoPy Mansion", 1125, "Adult", 7.5, 15, 250, 160, Color.magenta);
+        Attraction hauntedMansion = new Attraction("Haunted Mansion", 1125, "Adult", 7.5, 15, 250, 160, Color.magenta);
         rides.add(hauntedMansion);
         /*
         //(1)

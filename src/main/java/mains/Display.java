@@ -1718,43 +1718,41 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         public void drawHover(Graphics g) throws ConcurrentModificationException  {
             Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
             PointerInfo a = MouseInfo.getPointerInfo();
-            Point b = a.getLocation();
-            boolean caseMet = false;
-            switch(currnum) {
-                case 2: if (b.getY() < 100 ) {
-                    hover = true;
-                    caseMet = true;
+            hover = false;
+            
+            if (a != null) {
+                Point b = a.getLocation();
+                switch(currnum) {
+                    case 2: 
+                        if (b.getY() < 100 ) {
+                            hover = true;
+                        }
+                        break;
+                    case 3: 
+                        if (b.getX() > size.getWidth() - 100) {
+                            hover = true;
+                        }
+                        break;
+                    case 0: 
+                        if (b.getY() > size.getHeight() - 100) {
+                            hover = true;
+                        }
+                        break;
+                    case 1: 
+                        if (b.getX() < 100) {
+                            hover = true;
+                        }
+
+                    case 4: 
+                        if (b.getX() < 100 || b.getY() > size.getHeight() - 100 || b.getX() > size.getWidth() - 100 || b.getY() < 100) {
+                            hover = true;
+                        }
+                        break;
                 }
-                    break;
-                case 3: if (b.getX() > size.getWidth() - 100) {
-                    hover = true;
-                    caseMet = true;
-                }
-                    break;
-                case 0: if (b.getY() > size.getHeight() - 100) {
-                    hover = true;
-                    caseMet = true;
-                }
-                    break;
-                case 1: if (b.getX() < 100) {
-                    hover = true;
-                    caseMet = true;
-                }
-                
-                case 4: if (b.getX() < 100 || b.getY() > size.getHeight() - 100 || b.getX() > size.getWidth() - 100 || b.getY() < 100) {
-                    hover = true;
-                    caseMet = true;
-                }
-                    break;    
             }
            
-            if (!caseMet) {
-                hover = false;
-            }
-           
-           
-           if (hover) {
-            g.setColor(Color.white);
+            if (hover) {
+                g.setColor(Color.white);
                 switch (currnum) {
                     case 0: g.drawOval(0, size.height - 100, size.width, 200);  break; 
                     case 1: g.drawOval(-100, 0, 200, size.height); break;
