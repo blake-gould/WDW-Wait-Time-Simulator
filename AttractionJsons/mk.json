@@ -1,0 +1,408 @@
+[
+  {
+    "name": "Haunted Mansion",
+    "cost": 1125,
+    "audience": "Adult",
+    "duration": 7.5,
+    "popularity": 15,
+    "x": 540,
+    "y": 120,
+    "color": [
+      255,
+      0,
+      255
+    ]
+  },
+  {
+    "name": "Space Mountain",
+    "cost": 5000,
+    "audience": "Young Adult",
+    "duration": 2.5,
+    "popularity": 25,
+    "x": 150,
+    "y": 450,
+    "color": [
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "name": "Tiana's Bayou Adventure",
+    "cost": 3000,
+    "audience": "Young Adult",
+    "duration": 11,
+    "popularity": 20,
+    "x": 100,
+    "y": 320,
+    "color": [
+      0,
+      0,
+      255
+    ]
+  },
+  {
+    "name": "Dumbo",
+    "cost": 7500,
+    "audience": "Child",
+    "duration": 1.5,
+    "popularity": 5,
+    "x": 1420,
+    "y": 160,
+    "color": [
+      128,
+      128,
+      128
+    ]
+  },
+  {
+    "name": "The Little Mermaid",
+    "cost": 1636,
+    "audience": "Child",
+    "duration": 6,
+    "popularity": 5,
+    "x": 1220,
+    "y": 30,
+    "color": [
+      0,
+      255,
+      255
+    ]
+  },
+  {
+    "name": "The People Mover",
+    "cost": 782,
+    "audience": "Adult",
+    "duration": 10,
+    "popularity": 0,
+    "x": 1380,
+    "y": 460,
+    "color": [
+      128,
+      128,
+      128
+    ]
+  },
+  {
+    "name": "Winnie the Pooh",
+    "cost": 4235,
+    "audience": "Child",
+    "duration": 3,
+    "popularity": 10,
+    "x": 1110,
+    "y": 260,
+    "color": [
+      255,
+      255,
+      0
+    ]
+  },
+  {
+    "name": "Pirates of the Carribean",
+    "cost": 1125,
+    "audience": "Young Adult",
+    "duration": 8.5,
+    "popularity": 15,
+    "x": 270,
+    "y": 600,
+    "color": [
+      255,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "Big Thunder Mountain Railroad",
+    "cost": 1500,
+    "audience": "Young Adult",
+    "duration": 3.5,
+    "popularity": 10,
+    "x": 210,
+    "y": 130,
+    "color": [
+      128,
+      128,
+      128
+    ]
+  },
+  {
+    "name": "7 Dwarfs Mine Train",
+    "cost": 3000,
+    "audience": "Young Adult",
+    "duration": 2.5,
+    "popularity": 25,
+    "x": 1160,
+    "y": 130,
+    "color": [
+      0,
+      128,
+      0
+    ]
+  },
+  {
+    "name": "Peter Pan's Flight",
+    "cost": 4500,
+    "audience": "Adult",
+    "duration": 3,
+    "popularity": 20,
+    "x": 790,
+    "y": 250,
+    "color": [
+      0,
+      128,
+      0
+    ]
+  },
+  {
+    "name": "Buzz Lightyear's Space Ranger Spin",
+    "cost": 4500,
+    "audience": "Child",
+    "duration": 4,
+    "popularity": 5,
+    "x": 1310,
+    "y": 580,
+    "color": [
+      75,
+      0,
+      130
+    ]
+  },
+  {
+    "name": "Prince Charming Regal Carrousel",
+    "cost": 2553,
+    "audience": "Child",
+    "duration": 2,
+    "popularity": 0,
+    "x": 940,
+    "y": 200,
+    "color": [
+      255,
+      255,
+      255
+    ]
+  },
+  {
+    "name": "Jungle Cruise",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 10,
+    "popularity": 15,
+    "x": 513,
+    "y": 557,
+    "color": [
+      34,
+      140,
+      30
+    ]
+  },
+  {
+    "name": "Tomorrowland Speedway",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 5,
+    "popularity": 20,
+    "x": 1380,
+    "y": 270,
+    "color": [
+      255,
+      69,
+      0
+    ]
+  },
+  {
+    "name": "Astro Orbiter",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 3,
+    "popularity": 15,
+    "x": 1310,
+    "y": 410,
+    "color": [
+      0,
+      191,
+      255
+    ]
+  },
+  {
+    "name": "Mad Tea Party",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 2,
+    "popularity": 10,
+    "x": 1230,
+    "y": 230,
+    "color": [
+      255,
+      105,
+      180
+    ]
+  },
+  {
+    "name": "It's a Small World",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 15,
+    "popularity": 30,
+    "x": 720,
+    "y": 100,
+    "color": [
+      0,
+      255,
+      255
+    ]
+  },
+  {
+    "name": "Carousel of Progress",
+    "cost": 2000,
+    "audience": "Adult",
+    "duration": 20,
+    "popularity": 10,
+    "x": 1540,
+    "y": 640,
+    "color": [
+      169,
+      169,
+      169
+    ]
+  },
+  {
+    "name": "Swiss Family Treehouse",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 10,
+    "popularity": 5,
+    "x": 670,
+    "y": 540,
+    "color": [
+      139,
+      69,
+      19
+    ]
+  },
+  {
+    "name": "Liberty Square Riverboat",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 15,
+    "popularity": 10,
+    "x": 470,
+    "y": 330,
+    "color": [
+      128,
+      0,
+      0
+    ]
+  },
+  {
+    "name": "Hall of Presidents",
+    "cost": 2000,
+    "audience": "Adult",
+    "duration": 20,
+    "popularity": 5,
+    "x": 680,
+    "y": 140,
+    "color": [
+      0,
+      0,
+      128
+    ]
+  },
+  {
+    "name": "Country Bear Jamboree",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 10,
+    "popularity": 5,
+    "x": 390,
+    "y": 420,
+    "color": [
+      139,
+      69,
+      19
+    ]
+  },
+  {
+    "name": "Enchanted Tiki Room",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 10,
+    "popularity": 10,
+    "x": 330,
+    "y": 440,
+    "color": [
+      255,
+      223,
+      0
+    ]
+  },
+  {
+    "name": "Monsters, Inc. Laugh Floor",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 15,
+    "popularity": 15,
+    "x": 1230,
+    "y": 530,
+    "color": [
+      138,
+      43,
+      226
+    ]
+  },
+  {
+    "name": "Enchanted Tales with Belle",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 15,
+    "popularity": 15,
+    "x": 1060,
+    "y": 100,
+    "color": [
+      255,
+      182,
+      193
+    ]
+  },
+  {
+    "name": "Mickey\u2019s PhilharMagic",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 12,
+    "popularity": 20,
+    "x": 870,
+    "y": 290,
+    "color": [
+      0,
+      0,
+      255
+    ]
+  },
+  {
+    "name": "Barnstormer",
+    "cost": 2000,
+    "audience": "Child",
+    "duration": 2,
+    "popularity": 10,
+    "x": 1530,
+    "y": 140,
+    "color": [
+      255,
+      99,
+      71
+    ]
+  },
+  {
+    "name": "TRON Lightcycle Run",
+    "cost": 2000,
+    "audience": "Young Adult",
+    "duration": 3,
+    "popularity": 30,
+    "x": 1590,
+    "y": 280,
+    "color": [
+      0,
+      255,
+      255
+    ]
+  }
+]

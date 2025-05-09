@@ -4,14 +4,9 @@
 import essentials.Park;
 import essentials.Attraction;
 import other.myImage;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Scanner;
 import mains.Boardmaker;
 import mains.Display;
 
@@ -25,6 +20,14 @@ import mains.Display;
  *
  * @author blake
  */
+
+    
+    import org.json.JSONArray;
+    import org.json.JSONObject;
+    import java.nio.file.*;
+    import java.awt.Color;
+    import java.util.ArrayList;
+
 public class MainFrame extends javax.swing.JFrame {
     public ArrayList<Park> parks = new ArrayList<>();
     /**
@@ -34,13 +37,52 @@ public class MainFrame extends javax.swing.JFrame {
         //initComponents();
         run();
     }
+
+
+    public class AttractionLoader {
+
+        public static ArrayList<Attraction> loadAttractions(String filePath) {
+            ArrayList<Attraction> rides = new ArrayList<>();
+
+            try {
+                String content = Files.readString(Paths.get(filePath));
+                JSONArray array = new JSONArray(content);
+
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject obj = array.getJSONObject(i);
+
+                    String name = obj.getString("name");
+                    int cost = obj.getInt("cost");
+                    String audience = obj.getString("audience");
+                    double duration = obj.getDouble("duration");
+                    int popularity = obj.getInt("popularity");
+                    int x = obj.getInt("x");
+                    int y = obj.getInt("y");
+
+                    JSONArray colorArray = obj.getJSONArray("color");
+                    Color color = new Color(
+                        colorArray.getInt(0),
+                        colorArray.getInt(1),
+                        colorArray.getInt(2)
+                    );
+
+                    Attraction a = new Attraction(name, cost, audience, duration, popularity, x, y, color);
+                    rides.add(a);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return rides;
+        }
+    }
     
     public void loadMK() {
-        ArrayList<Attraction> rides = new ArrayList<>();
+        ArrayList<Attraction> rides = AttractionLoader.loadAttractions("C:\\Users\\blake\\Dev\\Github\\WDW-Wait-Time-Simulator\\AttractionJsons\\mk.json");
+
         
-        // ADD THE rides at (index)
-        
-        
+        /*
         //(0)
         Attraction hauntedMansion = new Attraction("Haunted Mansion", 1125, "Adult", 7.5, 15, 540, 120, Color.magenta);
         rides.add(hauntedMansion);
@@ -156,7 +198,7 @@ public class MainFrame extends javax.swing.JFrame {
         // (30) **New Attraction: TRON Lightcycle Run**
         Attraction tron = new Attraction("TRON Lightcycle Run", 2000, "Young Adult", 3, 30, 1590, 280, new Color(0, 255, 255)); // Cyan (Futuristic, Digital theme)
         rides.add(tron);
-
+        */
         
         myImage image = new myImage("map images\\magickingdom.jpg");
         image.minimalize(10);
@@ -176,6 +218,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     public void loadAK() {
+        ArrayList<Attraction> rides = AttractionLoader.loadAttractions("C:\\Users\\blake\\Dev\\Github\\WDW-Wait-Time-Simulator\\AttractionJsons\\ak.json");
+
+        /*
         ArrayList<Attraction> rides = new ArrayList<>();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         // 0
@@ -209,7 +254,8 @@ public class MainFrame extends javax.swing.JFrame {
         // 7
         Attraction triceratopSpin = new Attraction("Triceratop Spin", 3750, "Child", 1.5, 0, 426 + (dim.width / 2), 88 + (dim.height/2), new Color(159, 226, 191));
         rides.add(triceratopSpin);
-        
+        */
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         myImage image = new myImage("map images\\animalkingdom.jpg");
         image.minimalize(10);
         image.wash(0.62);
@@ -224,7 +270,8 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     public void laodHS() {
-        ArrayList<Attraction> rides = csvFile("attraction saves\\Hollywood Studios.csv");
+        ArrayList<Attraction> rides = AttractionLoader.loadAttractions("C:\\Users\\blake\\Dev\\Github\\WDW-Wait-Time-Simulator\\AttractionJsons\\hs.json");
+
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         
         myImage image = new myImage("map images\\hollywoodstudios.jpg");
@@ -239,7 +286,8 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     public void loadEP() {
-        ArrayList<Attraction> rides = csvFile("attraction saves\\Epcot.csv");
+        ArrayList<Attraction> rides = AttractionLoader.loadAttractions("C:\\Users\\blake\\Dev\\Github\\WDW-Wait-Time-Simulator\\AttractionJsons\\ec.json");
+
         
         myImage image = new myImage("map images\\epcot.jpg");
         image.minimalize(10);
@@ -251,31 +299,6 @@ public class MainFrame extends javax.swing.JFrame {
         list.add(new Point(-326+ (dim.width / 2), -35+ (dim.height/2)));
         list.add(new Point(370+ (dim.width / 2), -51+ (dim.height/2)));
         parks.add(new Park("Epcot", rides, "park drawings saves\\epcot.txt", Color.white, image, list, new Point(148,411), 1));
-    }
-
-    public ArrayList<Attraction> csvFile(String file) {
-        ArrayList<Attraction> rides = new ArrayList<>();
-        try {
-            
-            Scanner sc = new Scanner(new File(file));  
-            sc.useDelimiter(",");   //sets the delimiter pattern  
-            sc.nextLine();
-            while (sc.hasNext())  //returns a boolean value  
-            {  
-                String curr = sc.nextLine();
-                String[] currs = curr.split(",");
-                Color c = new Color(Integer.valueOf(currs[8]), Integer.valueOf(currs[9]), Integer.valueOf(currs[10]));
-                
-                Attraction a = new Attraction(currs[1], Double.parseDouble(currs[2]), currs[3], Double.parseDouble(currs[4]), Integer.valueOf(currs[5]), Integer.valueOf(currs[6]), Integer.valueOf(currs[7]), c);
-                rides.add(a);
-            }   
-            sc.close();  //closes the scanner  
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.print("File Success" + file + rides.size());
-        return rides;
     }
     
     public void run() {

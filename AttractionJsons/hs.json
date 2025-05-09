@@ -1,0 +1,145 @@
+[
+  {
+    "name": "Alien Swirling Saucers",
+    "shortName": "Swirling Saucers",
+    "cost": 6000,
+    "audience": "Child",
+    "duration": 1.5,
+    "popularity": 10,
+    "x": 320,
+    "y": 380,
+    "color": [107, 241, 120]
+  },
+  {
+    "name": "Beauty and the Beast Live On Stage",
+    "shortName": "Beauty and the Beast",
+    "cost": 2400,
+    "audience": "Child",
+    "duration": 30,
+    "popularity": 5,
+    "x": 1490,
+    "y": 320,
+    "color": [10, 34, 57]
+  },
+  {
+    "name": "Indiana Jones: Stunt Spectacular",
+    "shortName": "Indiana Jones",
+    "cost": 1674.42,
+    "audience": "Adult",
+    "duration": 30,
+    "popularity": 5,
+    "x": 1250,
+    "y": 690,
+    "color": [124, 99, 84]
+  },
+  {
+    "name": "Muppet Vision 3D",
+    "shortName": "Muppet Vision",
+    "cost": 2130.18,
+    "audience": "Adult",
+    "duration": 17,
+    "popularity": 5,
+    "x": 710,
+    "y": 780,
+    "color": [145, 242, 145]
+  },
+  {
+    "name": "Disney Junior - Live On Stage",
+    "shortName": "Disney Junior",
+    "cost": 22500,
+    "audience": "Child",
+    "duration": 20,
+    "popularity": 0,
+    "x": 1120,
+    "y": 300,
+    "color": [57, 147, 221]
+  },
+  {
+    "name": "Rock n' Roller Coaster",
+    "shortName": "Rock n' Roller",
+    "cost": 2000,
+    "audience": "YoungAdult",
+    "duration": 1.5,
+    "popularity": 25,
+    "x": 1330,
+    "y": 120,
+    "color": [236, 11, 67]
+  },
+  {
+    "name": "Slinky Dog Dash",
+    "shortName": "Slinky Dog",
+    "cost": 2500,
+    "audience": "YoungAdult",
+    "duration": 2,
+    "popularity": 30,
+    "x": 440,
+    "y": 230,
+    "color": [216, 189, 138]
+  },
+  {
+    "name": "Star Tours",
+    "shortName": "Star Tours",
+    "cost": 1894.74,
+    "audience": "YoungAdult",
+    "duration": 5,
+    "popularity": 10,
+    "x": 940,
+    "y": 790,
+    "color": [110, 68, 255]
+  },
+  {
+    "name": "Toy Story Mania",
+    "shortName": "Toy Story Mania",
+    "cost": 5000,
+    "audience": "Child",
+    "duration": 8,
+    "popularity": 15,
+    "x": 600,
+    "y": 430,
+    "color": [117, 70, 104]
+  },
+  {
+    "name": "Tower of Terror",
+    "shortName": "Tower of Terror",
+    "cost": 2857.14,
+    "audience": "YoungAdult",
+    "duration": 5,
+    "popularity": 25,
+    "x": 1500,
+    "y": 230,
+    "color": [0, 0, 0]
+  },
+  {
+    "name": "Rise of the Resistance",
+    "shortName": "Rise",
+    "cost": 2400,
+    "audience": "YoungAdult",
+    "duration": 7,
+    "popularity": 30,
+    "x": 510,
+    "y": 740,
+    "color": [191, 189, 193]
+  },
+  {
+    "name": "Millenium Falcon: Smugglers Run",
+    "shortName": "Smugglers Run",
+    "cost": 2117.65,
+    "audience": "YoungAdult",
+    "duration": 5,
+    "popularity": 30,
+    "x": 20,
+    "y": 710,
+    "color": [206, 237, 219]
+  },
+  {
+    "name": "Mickey and Minnie's Runaway Railway",
+    "shortName": "Runaway Railway",
+    "cost": 1894.74,
+    "audience": "Adult",
+    "duration": 5,
+    "popularity": 25,
+    "x": 820,
+    "y": 470,
+    "color": [230, 95, 92]
+  }
+]

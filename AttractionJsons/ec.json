@@ -1,0 +1,178 @@
+[
+  {
+    "name": "The American Adventure",
+    "shortName": "American Adventure",
+    "cost": 2627.737226,
+    "audience": "Adult",
+    "duration": 28.5,
+    "popularity": 0,
+    "x": 1570,
+    "y": 390,
+    "color": [255, 255, 255]
+  },
+  {
+    "name": "Remy's Ratatouille Adventure",
+    "shortName": "Remy's",
+    "cost": 1714.285714,
+    "audience": "YoungAdult",
+    "duration": 5,
+    "popularity": 25,
+    "x": 1400,
+    "y": 740,
+    "color": [89, 89, 74]
+  },
+  {
+    "name": "Frozen Ever After",
+    "shortName": "Frozen",
+    "cost": 3130.434783,
+    "audience": "YoungAdult",
+    "duration": 5,
+    "popularity": 20,
+    "x": 1050,
+    "y": 120,
+    "color": [174, 197, 235]
+  },
+  {
+    "name": "Gran Fiesta Tour Starring The Three Caballeros",
+    "shortName": "Gran Fiesta Tour",
+    "cost": 2168.674699,
+    "audience": "Child",
+    "duration": 8,
+    "popularity": 5,
+    "x": 910,
+    "y": 210,
+    "color": [209, 17, 73]
+  },
+  {
+    "name": "Impressions de France",
+    "shortName": "Impressions",
+    "cost": 1800,
+    "audience": "Adult",
+    "duration": 18,
+    "popularity": 0,
+    "x": 1490,
+    "y": 730,
+    "color": [255, 255, 255]
+  },
+  {
+    "name": "Journey into Imagination with Figment",
+    "shortName": "Journey into Imagination",
+    "cost": 1400.77821,
+    "audience": "Child",
+    "duration": 11,
+    "popularity": 0,
+    "x": 690,
+    "y": 620,
+    "color": [89, 17, 77]
+  },
+  {
+    "name": "Living with the Land",
+    "shortName": "Living with the Land",
+    "cost": 2250,
+    "audience": "Adult",
+    "duration": 13.5,
+    "popularity": 0,
+    "x": 470,
+    "y": 650,
+    "color": [148, 157, 106]
+  },
+  {
+    "name": "Mission: SPACE",
+    "shortName": "Mission: SPACE",
+    "cost": 2250,
+    "audience": "YoungAdult",
+    "duration": 5.5,
+    "popularity": 15,
+    "x": 460,
+    "y": 140,
+    "color": [255, 173, 105]
+  },
+  {
+    "name": "Canada Far and Wide",
+    "shortName": "Canada",
+    "cost": 1800,
+    "audience": "Adult",
+    "duration": 15,
+    "popularity": 0,
+    "x": 880,
+    "y": 630,
+    "color": [255, 255, 255]
+  },
+  {
+    "name": "Reflections of China",
+    "shortName": "Reflections",
+    "cost": 3600,
+    "audience": "Adult",
+    "duration": 12.5,
+    "popularity": 0,
+    "x": 1200,
+    "y": 130,
+    "color": [255, 0, 0]
+  },
+  {
+    "name": "The Seas with Nemo and Friends",
+    "shortName": "The Seas",
+    "cost": 1636.363636,
+    "audience": "Child",
+    "duration": 4,
+    "popularity": 5,
+    "x": 290,
+    "y": 620,
+    "color": [71, 168, 189]
+  },
+  {
+    "name": "Soarin' Around the World",
+    "shortName": "Soarin'",
+    "cost": 4444.444444,
+    "audience": "Adult",
+    "duration": 5,
+    "popularity": 20,
+    "x": 490,
+    "y": 730,
+    "color": [88, 164, 176]
+  },
+  {
+    "name": "Spaceship Earth",
+    "shortName": "Spaceship Earth",
+    "cost": 1500,
+    "audience": "Adult",
+    "duration": 15,
+    "popularity": 15,
+    "x": 300,
+    "y": 400,
+    "color": [88, 164, 176]
+  },
+  {
+    "name": "Test Track",
+    "shortName": "Test Track",
+    "cost": 3333.333333,
+    "audience": "YoungAdult",
+    "duration": 4,
+    "popularity": 20,
+    "x": 680,
+    "y": 210,
+    "color": [236, 164, 0]
+  },
+  {
+    "name": "Turtle Talk with Crush",
+    "shortName": "Turtle Talk",
+    "cost": 1800,
+    "audience": "Child",
+    "duration": 15,
+    "popularity": 5,
+    "x": 360,
+    "y": 620,
+    "color": [131, 182, 146]
+  },
+  {
+    "name": "Guardians of the Galaxy: Cosmic Rewind",
+    "shortName": "Cosmic Rewind",
+    "cost": 2117.647059,
+    "audience": "YoungAdult",
+    "duration": 3.5,
+    "popularity": 30,
+    "x": 260,
+    "y": 230,
+    "color": [65, 34, 52]
+  }
+]
