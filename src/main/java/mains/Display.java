@@ -1024,6 +1024,7 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
         public dpanel() {
             addMouseListener(new MouseAdapter() { 
                 public void mousePressed(MouseEvent me) { 
+                    System.out.println(me.getX() + ", " + me.getY());
                     if (activePark != null && me.getX() > 70 && me.getX() < 120 && me.getY() > 40 && me.getY() < 90) {
                         bgg.isOpen = !bgg.isOpen;
                         

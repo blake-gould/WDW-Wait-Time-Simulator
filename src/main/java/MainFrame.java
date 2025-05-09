@@ -42,69 +42,122 @@ public class MainFrame extends javax.swing.JFrame {
         
         
         //(0)
-        Attraction hauntedMansion = new Attraction("Haunted Mansion", 1125, "Adult", 7.5, 15, 250, 160, Color.magenta);
+        Attraction hauntedMansion = new Attraction("Haunted Mansion", 1125, "Adult", 7.5, 15, 540, 120, Color.magenta);
         rides.add(hauntedMansion);
-        /*
+        
         //(1)
-        Attraction spaceMountain = new Attraction("Space Mountain", 5000, "Young Adult", 2.5, 25);
-        spaceMountain.setGraphics(1290, 370, Color.white);
+        Attraction spaceMountain = new Attraction("Space Mountain", 5000, "Young Adult", 2.5, 25, 150, 450, Color.white);
         rides.add(spaceMountain);
         
         //(2)
-        Attraction splashMountain = new Attraction("Splash Mountain", 3000, "Young Adult", 11, 20);
-        splashMountain.setGraphics(30, 300, Color.BLUE);
-        rides.add(splashMountain);
-        splashMountain
+        Attraction tianas = new Attraction("Tiana's Bayou Adventure", 3000, "Young Adult", 11, 20, 100, 320, Color.BLUE);
+        rides.add(tianas);
+
         //(3)
-        Attraction dumbo = new Attraction("Dumbo", 7500, "Child", 1.5, 5);
-        dumbo.setGraphics(1200, 150,  Color.gray);
+        Attraction dumbo = new Attraction("Dumbo", 7500, "Child", 1.5, 5, 1420, 160,Color.gray);
         rides.add(dumbo);
         
         //(4)
-        Attraction mermaid = new Attraction("The Little Mermaid", 1636, "Child", 6, 5);
-        mermaid.setGraphics(1010, 130, Color.cyan);
+        Attraction mermaid = new Attraction("The Little Mermaid", 1636, "Child", 6, 5, 1220, 30, Color.cyan);
         rides.add(mermaid);
         
         //(5)
-        Attraction peopleMover = new Attraction("The People Mover", 782, "Adult", 10, 0);
-        peopleMover.setGraphics(1100, 460, Color.gray);
+        Attraction peopleMover = new Attraction("The People Mover", 782, "Adult", 10, 0, 1380, 460, Color.gray);
         rides.add(peopleMover);
         
         // (6)
-        Attraction pooh = new Attraction("Winnie the Pooh", 4235, "Child", 3, 10);
-        pooh.setGraphics(920, 240, Color.yellow);
+        Attraction pooh = new Attraction("Winnie the Pooh", 4235, "Child", 3, 10, 1110, 260, Color.yellow);
         rides.add(pooh);
        
         // (7)
-        Attraction pirates = new Attraction("Pirates of the Carribean", 1125, "Young Adult", 8.5, 15);
-        pirates.setGraphics(270, 500, Color.RED);
+        Attraction pirates = new Attraction("Pirates of the Carribean", 1125, "Young Adult", 8.5, 15, 270, 600, Color.RED);
         rides.add(pirates);
         
         // (8)
-        Attraction bigThunder = new Attraction("Big Thunder Mountain Railroad", 1500, "Young Adult", 3.5, 10);
-        bigThunder.setGraphics(50, 180, Color.GRAY);
+        Attraction bigThunder = new Attraction("Big Thunder Mountain Railroad", 1500, "Young Adult", 3.5, 10, 210, 130, Color.GRAY);
         rides.add(bigThunder);   
         
         //(9)
-        Attraction sevenDwarfs = new Attraction("7 Dwarfs Mine Train", 3000, "Young Adult", 2.5, 25);
-        sevenDwarfs.setGraphics(910, 170, Color.green);
+        Attraction sevenDwarfs = new Attraction("7 Dwarfs Mine Train", 3000, "Young Adult", 2.5, 25, 1160, 130, Color.green);
         rides.add(sevenDwarfs);
         
         //(10)
-        Attraction peterPan = new Attraction("Peter Pan's Flight", 4500, "Adult", 3, 20);
-        peterPan.setGraphics(590, 200,Color.green);
+        Attraction peterPan = new Attraction("Peter Pan's Flight", 4500, "Adult", 3, 20, 790, 250,Color.green);
         rides.add(peterPan);
         
         //(11)
-        Attraction buzzLightYear = new Attraction("Buzz Lightyear's Space Ranger Spin", 4500, "Child", 4, 5);
-        buzzLightYear.setGraphics(970, 560, new Color(75,0,130));
+        Attraction buzzLightYear = new Attraction("Buzz Lightyear's Space Ranger Spin", 4500, "Child", 4, 5, 1310, 580, new Color(75,0,130));
         rides.add(buzzLightYear);      
         
         //(12)
-        Attraction carrousel = new Attraction("Prince Charming Regal Carrousel", 2553, "Child", 2, 0);
-        carrousel.setGraphics(710, 90,Color.white);
+        Attraction carrousel = new Attraction("Prince Charming Regal Carrousel", 2553, "Child", 2, 0, 940, 200,Color.white);
         rides.add(carrousel); 
-        */
+        
+        // (13)
+        Attraction jungleCruise = new Attraction("Jungle Cruise", 2000, "Young Adult", 10, 15, 513, 557, new Color(34, 140, 30)); // Forest Green (Jungle theme)
+        rides.add(jungleCruise);
+
+        // (14)
+        Attraction speedway = new Attraction("Tomorrowland Speedway", 2000, "Young Adult", 5, 20, 1380, 270, new Color(255, 69, 0)); // Red-Orange (Speedway/Car theme)
+        rides.add(speedway);
+
+        // (15)
+        Attraction astroOrbiter = new Attraction("Astro Orbiter", 2000, "Young Adult", 3, 15, 1310, 410, new Color(0, 191, 255)); // Deep Sky Blue (Space theme)
+        rides.add(astroOrbiter);
+
+        // (16)
+        Attraction madTeaParty = new Attraction("Mad Tea Party", 2000, "Child", 2, 10, 1230, 230, new Color(255, 105, 180)); // Hot Pink (Tea Party theme)
+        rides.add(madTeaParty);
+
+        // (17)
+        Attraction smallWorld = new Attraction("It's a Small World", 2000, "Child", 15, 30, 720, 100, new Color(0, 255, 255)); // Cyan (Colorful, world-spanning theme)
+        rides.add(smallWorld);
+
+        // (18)
+        Attraction carouselOfProgress = new Attraction("Carousel of Progress", 2000, "Adult", 20, 10, 1540, 640, new Color(169, 169, 169)); // Dark Gray (Retro-futuristic theme)
+        rides.add(carouselOfProgress);
+
+        // (19)
+        Attraction treehouse = new Attraction("Swiss Family Treehouse", 2000, "Young Adult", 10, 5, 670, 540, new Color(139, 69, 19)); // Saddle Brown (Wood/Tree theme)
+        rides.add(treehouse);
+
+        // (20)
+        Attraction riverboat = new Attraction("Liberty Square Riverboat", 2000, "Young Adult", 15, 10, 470, 330, new Color(128, 0, 0)); // Dark Red (Liberty Square theme)
+        rides.add(riverboat);
+
+        // (21)
+        Attraction hallOfPresidents = new Attraction("Hall of Presidents", 2000, "Adult", 20, 5, 680, 140, new Color(0, 0, 128)); // Navy Blue (Patriotic theme)
+        rides.add(hallOfPresidents);
+
+        // (22)
+        Attraction countryBear = new Attraction("Country Bear Jamboree", 2000, "Young Adult", 10, 5, 390, 420, new Color(139, 69, 19)); // Saddle Brown (Western/Old-timey theme)
+        rides.add(countryBear);
+
+        // (23)
+        Attraction tikiRoom = new Attraction("Enchanted Tiki Room", 2000, "Child", 10, 10, 330, 440, new Color(255, 223, 0)); // Yellow (Tropical theme)
+        rides.add(tikiRoom);
+
+        // (24)
+        Attraction monstersLaughFloor = new Attraction("Monsters, Inc. Laugh Floor", 2000, "Child", 15, 15, 1230, 530, new Color(138, 43, 226)); // Blue Violet (Monsters Inc. theme)
+        rides.add(monstersLaughFloor);
+
+        // (25)
+        Attraction enchantedBelle = new Attraction("Enchanted Tales with Belle", 2000, "Child", 15, 15, 1060, 100, new Color(255, 182, 193)); // Light Pink (Belle/Disney Princess theme)
+        rides.add(enchantedBelle);
+
+        // (26)
+        Attraction philharmagic = new Attraction("Mickey’s PhilharMagic", 2000, "Child", 12, 20, 870, 290, new Color(0, 0, 255)); // Blue (Classical music theme)
+        rides.add(philharmagic);
+
+        // (27)
+        Attraction barnstormer = new Attraction("Barnstormer", 2000, "Child", 2, 10, 1530, 140, new Color(255, 99, 71)); // Tomato (Barnstormer/Wings theme)
+        rides.add(barnstormer);
+
+        // (30) **New Attraction: TRON Lightcycle Run**
+        Attraction tron = new Attraction("TRON Lightcycle Run", 2000, "Young Adult", 3, 30, 1590, 280, new Color(0, 255, 255)); // Cyan (Futuristic, Digital theme)
+        rides.add(tron);
+
+        
         myImage image = new myImage("map images\\magickingdom.jpg");
         image.minimalize(10);
         image.wash(0.62);
