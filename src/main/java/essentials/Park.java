@@ -567,273 +567,240 @@ public class Park {
         
     }
     
-    public int counter;
-    public void FamilyMove() {
-        
-        ArrayList<Family> toAdd;
-        synchronized (this) {
-            toAdd = familysToAdd;
-            familysToAdd = new ArrayList<>();
-        }
-        Familys.addAll(toAdd);
-        
-        ArrayList<Family> familysToDetermineDestination = new ArrayList<>();
-        for (Family g: Familys) {
-            if (g != null) {
-                if (g.transferred) {
-                    familysToDetermineDestination.add(g);
-                    g.transferred = false;
-                }
-            }
-        }
-        
-        for (Family g: familysToDetermineDestination) {
-            determineDestination(g);
-        }
-        
-        familysToDetermineDestination = new ArrayList<>();
-        familysToDetermineDestination.clear();
-        
-        counter++;
-        // Called every three minutes, checks to see if anyone has completed all the rides
-        // If so, their ride history gets wiped
-        if (counter % 3600 == 0) {
-            for (Family g: Familys) {
-                if (g.ridesRidden.size() == rides.size()) {
-                    for (Attraction a: rides) {
-                        g.ridesRidden.remove(a);
-                    }
-                }  
-            }
-            for (Attraction b : rides) {
-                for (Family g: b.line) {
-                    if (g.ridesRidden.size() == rides.size()) {
-                        for (Attraction a: rides) {
-                            g.ridesRidden.remove(a);
-                        }
-                    }
-                } 
-                for (Family g: b.fline) {
-                    if (g.ridesRidden.size() == rides.size()) {
-                        for (Attraction a: rides) {
-                            g.ridesRidden.remove(a);
-                        }
-                    }
-                }
-                for (Family g: b.ride) {
-                    if (g.ridesRidden.size() == rides.size()) {
-                        for (Attraction a: rides) {
-                            g.ridesRidden.remove(a);
-                        }
-                    }
-                }
-            }
-        }
-        
-        // This indicates if an individual is already exiting this passTime()
-        boolean oneExiting = false;
-        
-        // If the Family is on a ride, increase the time they've been on that ride
-        for (Attraction a: rides) {
-            for (Family g: a.ride) {
-                g.expTimer += 0.00083333333333333333333333333333333333333333333333333333;   
-            }
-            
-            
-            // the line and goes to that new location. The Family will not early exit from a fastpass line
-            for (Family g: a.line) {
-                // If the Family is in line and no other Familys have exited this movement,
-                if (!oneExiting) {
-                    Attraction curr = g.attractionDestination;
-                    boolean foundARideableRide = false;
-                    for (Attraction a2 : rides) {
-                        if (curr == null) {
-                            determineDestination(g, g.attractionDestination);
-                            break;
-                        // If the exaust is 25 less at some other attraction, the Family early exits
-                        } else if (getExhaust(g, curr) - getExhaust(g, a2) > 25 && !a2.closed) {
+        public int counter;
+        private final Object familysLock = new Object();
+        private final Object familysToAddLock = new Object();
+        private final Object ridesLock = new Object();
+        private final Object trackingModelLock = new Object();
+        private final Object fastpassTALock = new Object();
 
-                            curr.line.remove(g);
-                            g = earlyExit(g);
-                            oneExiting = true;
-                            if (g.tracking) {
-                                trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime [1] + ")");
-                            }
-                            break;
-                        // Check to make sure that there is still a ride in this park that the family would like to experience
-                        } else if (getExhaust(g,a2) < 100) {
-                            foundARideableRide = true;
-                        }
-                    }
-                    // IF the family could not find a ride in the whole park that they would like to experience
-                    if (!foundARideableRide) {
-                        if (curr != null) {
-                            curr.line.remove(g);
-                            g = earlyExit(g);
-                            oneExiting = true;
-                            if (g.tracking) {
-                                trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime [1] + ")");
-                            }
-                            break;    
-                        }
-                        
+        public void FamilyMove() {
+            ArrayList<Family> toAdd;
+            synchronized (familysToAddLock) {
+                toAdd = familysToAdd;
+                familysToAdd = new ArrayList<>();
+            }
+            synchronized (familysLock) {
+                Familys.addAll(toAdd);
+            }
+
+            ArrayList<Family> familysToDetermineDestination = new ArrayList<>();
+            synchronized (familysLock) {
+                for (Family g : Familys) {
+                    if (g != null && g.transferred) {
+                        familysToDetermineDestination.add(g);
+                        g.transferred = false;
                     }
                 }
             }
-        }
-        
-        ArrayList<Family> Familystoremove = new ArrayList<>();
-        
-        // When the Family reaches their detsination, add them to the appropriate line queue (Fastpass)
-        for (Family g : Familys) {
-            if (g.attractionDestination != null) {
-            if (g.location.getX() == g.destination.getX() && g.location.getY() == g.destination.getY()) {
-                for (Fastpass f: g.fpasses) {
-                    if ((f.target == g.attractionDestination && f.slot == currentTime[0]) || (f.target == null && f.slot == currentTime[0])) {
-                    if (g.attractionDestination.addToFPQueue(g)) {    
-                        if (g.tracking) {
-                            trackingModel.addElement("The subject used a fastpass for " + g.attractionDestination.name + " (" + currentTime[0] + ":" + currentTime [1] + ")");    
-                        }
-                        g.fpasses.remove(f);
-                        String str = "Fastpasses:\n";
-                        for (Fastpass h: g.fpasses) {
-                            if (h != null) {
-                                str += h.toString() + " \n";
+
+            for (Family g : familysToDetermineDestination) {
+                determineDestination(g);
+            }
+            familysToDetermineDestination.clear();
+
+            counter++;
+            if (counter % 3600 == 0) {
+                synchronized (familysLock) {
+                    for (Family g : Familys) {
+                        if (g.ridesRidden.size() == rides.size()) {
+                            for (Attraction a : rides) {
+                                g.ridesRidden.remove(a);
                             }
                         }
-                        fastpassTA.setText(str);
-                        Familystoremove.add(g);
-                        break;
-                    }
-                    }
-                }
-            }
-            }
-        }
-        
-        for (Family g: Familystoremove) {
-            Familys.remove(g);
-        }
-        Familystoremove.clear();
-          
-        // When the Family reaches their detsination, add them to the appropriate line queue (Regular Line)   
-        for (Family g : Familys) {   
-            if (g.attractionDestination != null) {
-            if (g.location.getX() == g.destination.getX() && g.location.getY() == g.destination.getY()) {
-                if (g.attractionDestination.addToQueue(g)) {
-                    if (g.tracking) {
-                        trackingModel.addElement("The subject began waiting in line for " + g.attractionDestination.name + " (" + currentTime[0] + ":" + currentTime [1] + ")");    
-                    }
-                    Familystoremove.add(g);   
-                }    
-            }
-            }
-        }
-        
-        for (Family g: Familystoremove) {
-            Familys.remove(g);
-        }
-        Familystoremove.clear();
-        
-        for (Family g: Familys) {
-            if(g.location.x == parkExitPoint.x && g.location.y == parkExitPoint.y && g.destination.x == parkExitPoint.x && g.destination.y == parkExitPoint.y) {
-                Familystoremove.add(g);
-                d.hubFamiliesToAdd.add(g);  
-                g.transferred = true;
-            }
-        }
-        
-        for (Family g: Familystoremove) {
-            Familys.remove(g);
-        }
-        Familystoremove.clear();
-
-        for (Family g : Familys) {
-                // This indicates if g has moved or not this passTime()
-                boolean moved = false;
-
-                // Up
-                if (g.location.getY() > g.destination.getY()) {
-                    int x = (int)g.location.getX();
-                    int y = (int)g.location.getY() - 1;
-                    if (x > 0 && y > 0) {
-                            g.setLocation(x, y);
-                            moved = true;    
                     }
                 }
 
-                // Down
-                if (g.location.getY() < g.destination.getY() && !moved) {
-                    int x = (int)g.location.getX();
-                    int y = (int)g.location.getY() + 1;
-                    if (x > 0 && y > 0) {
-                            g.setLocation(x, y);
-                            moved = true;  
+                for (Attraction b : rides) {
+                    for (Family g : b.line) {
+                        if (g.ridesRidden.size() == rides.size()) {
+                            for (Attraction a : rides) {
+                                g.ridesRidden.remove(a);
+                            }
+                        }
                     }
-                }
-
-                // Left
-                if (g.location.getX() > g.destination.getX() && !moved) {
-                    int x = (int)g.location.getX() - 1;
-                    int y = (int)g.location.getY();
-                    if (x > 0 && y > 0) {
-                            g.setLocation(x, y);
-                            moved = true;
+                    for (Family g : b.fline) {
+                        if (g.ridesRidden.size() == rides.size()) {
+                            for (Attraction a : rides) {
+                                g.ridesRidden.remove(a);
+                            }
+                        }
                     }
-                } 
-
-                // Right
-                if (g.location.getX() < g.destination.getX() && !moved) {
-                    int x = (int)g.location.getX() + 1;
-                    int y = (int)g.location.getY();
-                    if (x > 0 && y > 0) {
-                            g.setLocation(x, y);
-                            moved = true;
+                    for (Family g : b.ride) {
+                        if (g.ridesRidden.size() == rides.size()) {
+                            for (Attraction a : rides) {
+                                g.ridesRidden.remove(a);
+                            }
+                        }
                     }
-                }
-
-                if (currentTime[0] >= 20) {
-                    endSim();
                 }
                 
-            
-            
-        }
-        if (nicegraphics) {
-            dp.repaint();    
-        }
-        
-        for (Attraction a: rides) {
-            for (Family g: a.line) {
-                if (g.tracking) {
-                String str = "Fastpasses:\n";
-                for (Fastpass f: g.fpasses) {
-                    str += f.toString() + " \n";
+            }
+
+            boolean oneExiting = false;
+
+
+            for (Attraction a : rides) {
+                for (Family g : a.ride) {
+                    g.expTimer += 0.0008333333333333333;
                 }
-                fastpassTA.setText(str);
-                }
-            } 
-            for (Family g: a.ride) {
-                if (g.tracking) {
-                String str = "Fastpasses:\n";
-                for (Fastpass f: g.fpasses) {
-                    str += f.toString() + " \n";
-                }
-                fastpassTA.setText(str);
+
+                for (Family g : a.line) {
+                    if (!oneExiting) {
+                        Attraction curr = g.attractionDestination;
+                        boolean foundARideableRide = false;
+                        for (Attraction a2 : rides) {
+                            if (curr == null) {
+                                determineDestination(g, g.attractionDestination);
+                                break;
+                            } else if (getExhaust(g, curr) - getExhaust(g, a2) > 25 && !a2.closed) {
+                                curr.line.remove(g);
+                                g = earlyExit(g);
+                                oneExiting = true;
+                                if (g.tracking) {
+                                    synchronized (trackingModelLock) {
+                                        trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime[1] + ")");
+                                    }
+                                }
+                                break;
+                            } else if (getExhaust(g, a2) < 100) {
+                                foundARideableRide = true;
+                            }
+                        }
+                        if (!foundARideableRide && curr != null) {
+                            curr.line.remove(g);
+                            g = earlyExit(g);
+                            oneExiting = true;
+                            if (g.tracking) {
+                                synchronized (trackingModelLock) {
+                                    trackingModel.addElement("The subject changed lines (" + currentTime[0] + ":" + currentTime[1] + ")");
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            for (Family g: a.fline) {
-                if (g.tracking) {
-                String str = "Fastpasses:\n";
-                for (Fastpass f: g.fpasses) {
-                    str += f.toString() + " \n";
+
+
+            ArrayList<Family> Familystoremove = new ArrayList<>();
+
+            synchronized (familysLock) {
+                for (Family g : Familys) {
+                    if (g.attractionDestination != null && g.location.equals(g.destination)) {
+                        for (Fastpass f : g.fpasses) {
+                            if ((f.target == g.attractionDestination && f.slot == currentTime[0]) || (f.target == null && f.slot == currentTime[0])) {
+                                if (g.attractionDestination.addToFPQueue(g)) {
+                                    if (g.tracking) {
+                                        synchronized (trackingModelLock) {
+                                            trackingModel.addElement("The subject used a fastpass for " + g.attractionDestination.name + " (" + currentTime[0] + ":" + currentTime[1] + ")");
+                                        }
+                                    }
+                                    g.fpasses.remove(f);
+                                    synchronized (fastpassTALock) {
+                                        StringBuilder str = new StringBuilder("Fastpasses:\n");
+                                        for (Fastpass h : g.fpasses) {
+                                            if (h != null) str.append(h).append(" \n");
+                                        }
+                                        fastpassTA.setText(str.toString());
+                                    }
+                                    Familystoremove.add(g);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
-                fastpassTA.setText(str);
+                Familys.removeAll(Familystoremove);
+            }
+            Familystoremove.clear();
+
+            synchronized (familysLock) {
+                for (Family g : Familys) {
+                    if (g.attractionDestination != null && g.location.equals(g.destination)) {
+                        if (g.attractionDestination.addToQueue(g)) {
+                            if (g.tracking) {
+                                synchronized (trackingModelLock) {
+                                    trackingModel.addElement("The subject began waiting in line for " + g.attractionDestination.name + " (" + currentTime[0] + ":" + currentTime[1] + ")");
+                                }
+                            }
+                            Familystoremove.add(g);
+                        }
+                    }
+                }
+                Familys.removeAll(Familystoremove);
+            }
+            Familystoremove.clear();
+
+            synchronized (familysLock) {
+                for (Family g : Familys) {
+                    if (g.location.equals(parkExitPoint) && g.destination.equals(parkExitPoint)) {
+                        Familystoremove.add(g);
+                        d.hubFamiliesToAdd.add(g);
+                        g.transferred = true;
+                    }
+                }
+                Familys.removeAll(Familystoremove);
+            }
+            Familystoremove.clear();
+
+            synchronized (familysLock) {
+                for (Family g : Familys) {
+                    boolean moved = false;
+                    if (g.location.getY() > g.destination.getY()) {
+                        g.setLocation((int)g.location.getX(), (int)g.location.getY() - 1);
+                        moved = true;
+                    } else if (g.location.getY() < g.destination.getY() && !moved) {
+                        g.setLocation((int)g.location.getX(), (int)g.location.getY() + 1);
+                        moved = true;
+                    } else if (g.location.getX() > g.destination.getX() && !moved) {
+                        g.setLocation((int)g.location.getX() - 1, (int)g.location.getY());
+                        moved = true;
+                    } else if (g.location.getX() < g.destination.getX() && !moved) {
+                        g.setLocation((int)g.location.getX() + 1, (int)g.location.getY());
+                    }
+
+                    if (currentTime[0] >= 20) {
+                        endSim();
+                    }
                 }
             }
+
+            if (nicegraphics) {
+                dp.repaint();
+            }
+
+            for (Attraction a : rides) {
+                for (Family g : a.line) {
+                    if (g.tracking) {
+                        synchronized (fastpassTALock) {
+                            StringBuilder str = new StringBuilder("Fastpasses:\n");
+                            for (Fastpass f : g.fpasses) str.append(f).append(" \n");
+                            fastpassTA.setText(str.toString());
+                        }
+                    }
+                }
+                for (Family g : a.ride) {
+                    if (g.tracking) {
+                        synchronized (fastpassTALock) {
+                            StringBuilder str = new StringBuilder("Fastpasses:\n");
+                            for (Fastpass f : g.fpasses) str.append(f).append(" \n");
+                            fastpassTA.setText(str.toString());
+                        }
+                    }
+                }
+                for (Family g : a.fline) {
+                    if (g.tracking) {
+                        synchronized (fastpassTALock) {
+                            StringBuilder str = new StringBuilder("Fastpasses:\n");
+                            for (Fastpass f : g.fpasses) str.append(f).append(" \n");
+                            fastpassTA.setText(str.toString());
+                        }
+                    }
+                }
+            }
+
         }
-        
-    } 
+
     
     
     /*

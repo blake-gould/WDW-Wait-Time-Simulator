@@ -5,8 +5,8 @@
     "audience": "Young Adult",
     "duration": 5,
     "popularity": 0,
-    "x": -631,
-    "y": 204,
+    "x": 110,
+    "y": 710,
     "color": [0, 128, 128]
   },
   {
@@ -15,8 +15,8 @@
     "audience": "Young Adult",
     "duration": 3,
     "popularity": 0,
-    "x": 367,
-    "y": 243,
+    "x": 1300,
+    "y": 720,
     "color": [154, 184, 122]
   },
   {
@@ -25,19 +25,9 @@
     "audience": "Young Adult",
     "duration": 3,
     "popularity": 0,
-    "x": 642,
-    "y": -233,
+    "x": 1620,
+    "y": 383,
     "color": [255, 255, 255]
-  },
-  {
-    "name": "It's Tough to be a Bug",
-    "cost": 1395.35,
-    "audience": "Child",
-    "duration": 8,
-    "popularity": 0,
-    "x": -239,
-    "y": -142,
-    "color": [135, 137, 192]
   },
   {
     "name": "Kali River Rapids",
@@ -45,8 +35,8 @@
     "audience": "Child",
     "duration": 3.5,
     "popularity": 0,
-    "x": 237,
-    "y": -241,
+    "x": 1150,
+    "y": 273,
     "color": [236, 115, 87]
   },
   {
@@ -55,8 +45,8 @@
     "audience": "Adult",
     "duration": 18.5,
     "popularity": 0,
-    "x": -661,
-    "y": -317,
+    "x": 50,
+    "y": 300,
     "color": [219, 182, 143]
   },
   {
@@ -65,18 +55,8 @@
     "audience": "Adult",
     "duration": 5,
     "popularity": 0,
-    "x": -491,
-    "y": 253,
+    "x": 270,
+    "y": 760,
     "color": [229, 68, 109]
-  },
-  {
-    "name": "Triceratop Spin",
-    "cost": 3750,
-    "audience": "Child",
-    "duration": 1.5,
-    "popularity": 0,
-    "x": 426,
-    "y": 88,
-    "color": [159, 226, 191]
   }
 ]

@@ -1433,14 +1433,6 @@ public ArrayList<JToggleButton> buttons = new ArrayList<>();
            g.drawLine(700+ adjustx,390+ adjusty,780+ adjustx,390+ adjusty);
            // Paint Castle
            
-           g.setColor(Color.pink);
-           g.fillRect(670, 250, 140, 60);
-           g.fillRect(698, 205, 84, 45);
-           g.fillRect(740, 175, 42, 30);
-           
-           g.setColor(Color.black);
-           g.fillRect(720, 280, 40, 30);
-           g.fillOval(720, 260, 40, 40);
            }
            
            
